@@ -191,9 +191,9 @@ MainGameState.prototype.update = function()
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
-    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 300)
+    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500)
     {
-        this.game.physics.arcade.accelerateToObject(enemy, this.player, 20, 150, 150)
+        this.game.physics.arcade.accelerateToObject(enemy, this.player, 50, 150, 150)
     }
     else
     {
