@@ -66,7 +66,7 @@ MainGameState.prototype.update = function() {
     
     // TOOD Handle laser beams colliding with things
     
-    if (this.cursors.up.isDown && this.player.body.onFloor() && this.game.time.now > this.jumpEnd)
+    if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
     {
         this.player.body.velocity.y = -280;
         this.jumpEnd = this.game.time.now + 1000;
