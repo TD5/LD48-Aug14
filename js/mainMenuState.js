@@ -8,9 +8,10 @@ function MainMenuState(game)
     this.titleText = undefined;
     this.titleString = "Adamantium\n   [ Cyborg ]";
     this.introString = "The Final War was a cataclysmic event that wiped out entire star systems.          \nThe weapons used to create such utter destruction took their toll on the fabric of spacetime.          \nA huge network of interconnected wormholes began to open up, linking distant places and times.          \nThe entities that dared design and use these weapons are still at large.          \nWe do not know what their next move will be, but we know our options are limited.          \n          \nYou are the only one left that can stop them.          \n          \nPlease help us.          \n          \n          \n<Click to begin>";
+    
 }
 
-MainMenuState.prototype.preload = function() {
+MainMenuState.prototype.thispreload = function() {
     this.game.load.image('mainMenuBackground', 'assets/graphics/mainMenuBackground.png');
     this.game.load.audio('title', ['assets/music/titleTheme.mp3', 'assets/music/titleTheme.ogg']);
 };
@@ -24,13 +25,18 @@ MainMenuState.prototype.create = function() {
     this.titleText = this.game.add.text(50, 50, '', { font: 'bold 50px Arial', fill: '#f4fff5' });
     this.introText = this.game.add.text(50, 250, '', { font: '16px Arial', fill: '#cccccc' });
     this.timeElapsed = 0;
+    this.callbackSet = false;
+    this.isShutdown = false;
 };
 
 MainMenuState.prototype.onPresslistener = function() {
-    this.music.destroy();
-    this.game.input.keyboard.onDownCallback = null;
-    console.log("On down post reset: "+this.game.input.keyboard.onDownCallback);
-    this.game.state.add('mainGame', new MainGameState(this.game), true);
+    if (!this.isShutdown)
+    {   
+        this.isShutdown = true;
+        this.background.events.onInputDown.removeAll();
+        console.log("Callback: "+this.background.events.onInputDown.getNumListeners());
+        this.game.state.start('mainGame');
+    }
 }
 
 MainMenuState.prototype.update = function() {
@@ -43,9 +49,17 @@ MainMenuState.prototype.render = function() {
     this.titleText.text = this.titleString.substring(0, numTitleCharsToShow);
     var numIntroCharsToShow = Math.max(Math.min(this.introString.length, -160 + (this.timeElapsed / 50)), 0);
     this.introText.text = this.introString.substring(0, numIntroCharsToShow);
-    if (this.timeElapsed > this.WAIT_PERIOD && this.game.input.keyboard.onDownCallback === null)
+    if (this.timeElapsed > this.WAIT_PERIOD && !this.callbackSet)
     {
-        this.game.input.keyboard.onDownCallback = this.onPresslistener.bind(this);
         this.background.events.onInputDown.add(this.onPresslistener, this);
+        this.callbackSet = true;
     }
+};
+
+MainMenuState.prototype.shutdown = function() {
+    console.log("Shutting down main menu...");
+    this.music.destroy();
+    this.background.destroy();
+    this.titleText.destroy();
+    this.introText.destroy();
 };

@@ -6,7 +6,7 @@ function GameOverState(game)
     this.titleString = "Game Over";
 }
 
-GameOverState.prototype.preload = function() {
+GameOverState.prototype.thispreload = function() {
     //this.game.load.audio('title', ['assets/music/titleTheme.mp3', 'assets/music/titleTheme.ogg']);
 };
 
@@ -21,7 +21,7 @@ GameOverState.prototype.create = function() {
 };
 
 GameOverState.prototype.onPresslistener = function() {
-    this.game.state.add('mainMenu', new MainMenuState(this.game), true);
+    this.game.state.start('mainMenu');
 }
 
 GameOverState.prototype.update = function() {

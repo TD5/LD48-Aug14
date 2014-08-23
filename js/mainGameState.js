@@ -1,13 +1,12 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.jumpEnd = 0;
     this.LASER_POOL_SIZE = 30;
     this.FIRE_DELAY = 100;
     this.SMALL_LASER_SPEED = 800;
 }
 
-MainGameState.prototype.preload = function() {
+MainGameState.prototype.thispreload = function() {
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
@@ -19,6 +18,7 @@ MainGameState.prototype.preload = function() {
 };
 
 MainGameState.prototype.create = function() {
+    this.jumpEnd = 0;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
@@ -77,7 +77,7 @@ MainGameState.prototype.update = function() {
         this.music.destroy();
         this.jumpsfx.destroy();
         this.smallLasersfx.destroy();
-        this.game.state.add('gameOver', new GameOverState(this.game), true);
+        this.game.state.start('gameOver');
     }
     
     if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
