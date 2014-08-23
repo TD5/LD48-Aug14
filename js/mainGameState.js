@@ -14,7 +14,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
-    this.game.load.image('enemySpikes', 'assets/graphics/enemySpikes.png');
+    this.game.load.game.load.spritesheet ('enemy', 'assets/graphics/enemy.png', 40, 40);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -74,10 +74,12 @@ MainGameState.prototype.create = function()
 MainGameState.prototype.createEnemies = function()
 {
     this.enemies = this.game.add.group();
-    var enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemySpikes');
+    var enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemy');
     this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
     enemy.body.allowGravity = false;
     enemy.anchor.setTo(0.5, 0.5);
+    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+    enemy.animations.play('fluctuate');
     this.enemies.add(enemy);
 }
 
@@ -86,13 +88,13 @@ MainGameState.prototype.update = function()
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
+    // TODO Make enemies home in when within range
+    
+    // TODO Be able to aim upwards
+    
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
-    
-    // TOOD Handle laser beams colliding with enemies
-    
-    // TODO Make the lightness of the spikey enemies pulsate
     
     if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
     {
