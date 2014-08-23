@@ -158,9 +158,14 @@ MainGameState.prototype.fire = function()
         smallLaserBeam.reset(this.player.x+this.player.body.halfWidth, this.player.y+7);
         smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED;
     }
-    smallLaserBeam.body.velocity.y = 0;
+    smallLaserBeam.body.velocity.y = Math.floor(this.gaussian() * 80) + 1;
     this.smallLasersfx.play('',0,1,false);
 };
+
+MainGameState.prototype.gaussian = function()
+{
+    return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
+}
 
 MainGameState.prototype.render = function() {
     if (this.smallLaserPool.countDead() !== 0)
