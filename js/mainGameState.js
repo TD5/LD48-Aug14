@@ -15,6 +15,7 @@ MainGameState.prototype.preload = function() {
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
+    this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
 MainGameState.prototype.create = function() {
@@ -43,6 +44,7 @@ MainGameState.prototype.create = function() {
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
     this.jumpsfx = this.game.add.audio('jumpjet');
+    this.smallLasersfx = this.game.add.audio('smallLaserBeamSfx');
 
     this.smallLaserPool = this.game.add.group();
     for(var i = 0; i < this.LASER_POOL_SIZE; i++) {
@@ -154,6 +156,7 @@ MainGameState.prototype.fire = function()
         smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED;
     }
     smallLaserBeam.body.velocity.y = 0;
+    this.smallLasersfx.play('',0,1,false);
 };
 
 MainGameState.prototype.render = function() {
