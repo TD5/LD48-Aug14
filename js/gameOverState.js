@@ -2,7 +2,7 @@ function GameOverState(game)
 {
     this.game = game;
     this.music = undefined;
-    this.msgString = "<Press any key to continue>";
+    this.msgString = "<Click to continue>";
     this.titleString = "Game Over";
 }
 
@@ -17,15 +17,13 @@ GameOverState.prototype.create = function() {
     this.titleText.anchor.setTo(0.5, 0.5);
     this.msgText = this.game.add.text(425, 375, this.msgString, { font: '16px Arial', fill: '#f4fff5' });
     this.msgText.anchor.setTo(0.5, 0.5);
-    this.game.input.keyboard.onDownCallback = this.onPresslistener;
 };
 
-GameOverState.prototype.onPresslistener = function() {
-    this.game.state.start('mainMenu');
-}
-
 GameOverState.prototype.update = function() {
-
+    if (this.game.input.activePointer.isDown)
+    {
+        this.game.state.start('mainMenu', true);
+    }
 };
 
 GameOverState.prototype.render = function() {

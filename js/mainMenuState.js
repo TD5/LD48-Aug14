@@ -17,6 +17,7 @@ MainMenuState.prototype.thispreload = function() {
 };
 
 MainMenuState.prototype.create = function() {
+    console.log("Creating main menu");
     this.background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuBackground');
     this.background.anchor.setTo(0.5, 0.5);
     this.background.inputEnabled = true;
@@ -25,19 +26,7 @@ MainMenuState.prototype.create = function() {
     this.titleText = this.game.add.text(50, 50, '', { font: 'bold 50px Arial', fill: '#f4fff5' });
     this.introText = this.game.add.text(50, 250, '', { font: '16px Arial', fill: '#cccccc' });
     this.timeElapsed = 0;
-    this.callbackSet = false;
-    this.isShutdown = false;
 };
-
-MainMenuState.prototype.onPresslistener = function() {
-    if (!this.isShutdown)
-    {   
-        this.isShutdown = true;
-        this.background.events.onInputDown.removeAll();
-        console.log("Callback: "+this.background.events.onInputDown.getNumListeners());
-        this.game.state.start('mainGame');
-    }
-}
 
 MainMenuState.prototype.update = function() {
 
@@ -49,10 +38,9 @@ MainMenuState.prototype.render = function() {
     this.titleText.text = this.titleString.substring(0, numTitleCharsToShow);
     var numIntroCharsToShow = Math.max(Math.min(this.introString.length, -160 + (this.timeElapsed / 50)), 0);
     this.introText.text = this.introString.substring(0, numIntroCharsToShow);
-    if (this.timeElapsed > this.WAIT_PERIOD && !this.callbackSet)
+    if (this.timeElapsed > this.WAIT_PERIOD && this.game.input.activePointer.isDown)
     {
-        this.background.events.onInputDown.add(this.onPresslistener, this);
-        this.callbackSet = true;
+        this.game.state.start('mainGame');
     }
 };
 
