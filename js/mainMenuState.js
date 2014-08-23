@@ -17,7 +17,6 @@ MainMenuState.prototype.thispreload = function() {
 };
 
 MainMenuState.prototype.create = function() {
-    console.log("Creating main menu");
     this.background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuBackground');
     this.background.anchor.setTo(0.5, 0.5);
     this.background.inputEnabled = true;
@@ -45,9 +44,7 @@ MainMenuState.prototype.render = function() {
 };
 
 MainMenuState.prototype.shutdown = function() {
-    console.log("Shutting down main menu...");
     this.music.destroy();
-    this.background.destroy();
     this.titleText.destroy();
     this.introText.destroy();
 };
