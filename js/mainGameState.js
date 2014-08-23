@@ -55,6 +55,9 @@ MainGameState.prototype.create = function() {
         smallLaserBeam.body.allowGravity = false;
         smallLaserBeam.kill();
     }
+    
+    this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
+    this.clipText.fixedToCamera = true;
 };
 
 MainGameState.prototype.update = function() {
@@ -160,5 +163,12 @@ MainGameState.prototype.fire = function()
 };
 
 MainGameState.prototype.render = function() {
-
+    if (this.smallLaserPool.countDead() !== 0)
+    {
+        this.clipText.text = "Clip remaining: " + this.smallLaserPool.countDead();
+    }
+    else
+    {
+        this.clipText.text = "CLIP EMPTY";
+    }
 };
