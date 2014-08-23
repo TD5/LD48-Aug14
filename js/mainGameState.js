@@ -39,6 +39,7 @@ MainGameState.prototype.create = function() {
     this.player.animations.add('stop', [0], 10, true);
     this.player.animations.add('jet', [4, 5], 10, true);
     this.game.camera.follow(this.player);
+    this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
     this.cursors = this.game.input.keyboard.createCursorKeys();
     this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.music = this.game.add.audio('overworld');
