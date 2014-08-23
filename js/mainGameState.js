@@ -8,7 +8,7 @@ function MainGameState(game)
 MainGameState.prototype.preload = function() {
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
-    this.game.load.image('player', 'assets/graphics/player.png');
+    this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
 };
 
@@ -28,6 +28,8 @@ MainGameState.prototype.create = function() {
     this.player.body.collideWorldBounds = true;
     this.player.body.setSize(50, 90, 0, 5);
     this.player.anchor.setTo(0.5,0.5);
+    this.player.animations.add('run', [0, 1, 2, 3], 10, true);
+    this.player.animations.add('stop', [0], 10, true);
     this.game.camera.follow(this.player);
     this.cursors = this.game.input.keyboard.createCursorKeys();
     this.music = this.game.add.audio('overworld');
@@ -40,6 +42,14 @@ MainGameState.prototype.update = function() {
     if (this.cursors.left.isDown)
     {
         this.player.body.velocity.x = -150;
+        if (this.player.body.onFloor())
+        {
+            this.player.animations.play('run');
+        }
+        else
+        {
+            this.player.animations.stop();
+        }
         if (this.facing != 'left')
         {
             this.player.scale.x = Math.abs(this.player.scale.x);
@@ -50,11 +60,26 @@ MainGameState.prototype.update = function() {
     {
         this.player.body.velocity.x = 150;
 
+            if (this.player.body.onFloor())
+            {
+                this.player.animations.play('run');
+            }
+            else
+            {
+                this.player.animations.stop();
+            }
+        
         if (this.facing != 'right')
         {
             this.player.scale.x = -Math.abs(this.player.scale.x);
             this.facing = 'right';
         }
+    }
+    else
+    {
+        this.facing = 'none';
+        this.player.animations.stop();
+        this.player.frame = 0;
     }
 
     if (this.cursors.up.isDown && this.player.body.onFloor() && this.game.time.now > this.jumpEnd)
