@@ -1,7 +1,7 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.music = undefined;
+    this.sfx = undefined;
     this.jumpEnd = 0;
 }
 
@@ -10,6 +10,7 @@ MainGameState.prototype.preload = function() {
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
+    this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
 };
 
 MainGameState.prototype.create = function() {
@@ -36,6 +37,7 @@ MainGameState.prototype.create = function() {
     this.cursors = this.game.input.keyboard.createCursorKeys();
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
+    this.jumpsfx = this.game.add.audio('jumpjet');
 };
 
 MainGameState.prototype.update = function() {
@@ -48,6 +50,7 @@ MainGameState.prototype.update = function() {
         this.jumpEnd = this.game.time.now + 1000;
         this.jumping = true;
         this.player.animations.play('jet');
+        this.jumpsfx.play('',0,1,false);
     }
     else if (!this.cursors.up.isDown && this.player.body.onFloor())
     {
