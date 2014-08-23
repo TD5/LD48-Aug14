@@ -32,6 +32,10 @@ MainGameState.prototype.create = function() {
     this.player.reset(120, 100, 1);
     console.log("Game world center x = "+this.game.world.centerX);
     console.log("Game world center y = "+this.game.world.centerY);
+    console.log("Game world x = "+this.game.world.x);
+    console.log("Game world y = "+this.game.world.y);
+    console.log("Game world width = "+this.game.world.width);
+    console.log("Game world height = "+this.game.world.height);
     console.log("Player x = "+this.player.x);
     console.log("Player y = "+this.player.y);
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
