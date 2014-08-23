@@ -18,6 +18,8 @@ MainGameState.prototype.thispreload = function() {
 };
 
 MainGameState.prototype.create = function() {
+    console.log("gameCreatestart Game world center x = "+this.game.world.centerX);
+    console.log("gameCreatestart Game world center y = "+this.game.world.centerY);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
@@ -25,6 +27,8 @@ MainGameState.prototype.create = function() {
     this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], true);
     this.map.setCollision([2, 4], false);
     this.layer = this.map.createLayer('layer1');
+    console.log("BR Game world width = "+this.game.world.width);
+    console.log("BR Game world height = "+this.game.world.height);
     // layer.debug = true;
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
@@ -78,6 +82,9 @@ MainGameState.prototype.create = function() {
     this.lastSmallLaserFiredAt = 0;
     this.player.animations.stop();
     this.player.frame = 0;
+    
+    console.log("gameCreateEnd Game world center x = "+this.game.world.centerX);
+    console.log("gameCreateEnd Game world center y = "+this.game.world.centerY);
 };
 
 MainGameState.prototype.update = function() {

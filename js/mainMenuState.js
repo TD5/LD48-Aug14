@@ -13,6 +13,8 @@ MainMenuState.prototype.thispreload = function() {
 };
 
 MainMenuState.prototype.create = function() {
+    console.log("menuCreateStart Game world center x = "+this.game.world.centerX);
+    console.log("menuCreateStart Game world center y = "+this.game.world.centerY);
     this.background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuBackground');
     this.background.anchor.setTo(0.5, 0.5);
     this.game.camera.follow(this.background);
@@ -23,6 +25,8 @@ MainMenuState.prototype.create = function() {
     this.introText = this.game.add.text(50, 250, '', { font: '16px Arial', fill: '#cccccc' });
     this.introText.fixedToCamera = true;
     this.timeElapsed = 0;
+    console.log("menuCreateEnd Game world center x = "+this.game.world.centerX);
+    console.log("menuCreateEnd Game world center y = "+this.game.world.centerY);
 };
 
 MainMenuState.prototype.update = function() {
