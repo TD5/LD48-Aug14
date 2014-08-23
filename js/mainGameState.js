@@ -17,7 +17,8 @@ MainGameState.prototype.create = function() {
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
     this.map.addTilesetImage('lvl1tiles');
-    this.map.setCollisionByExclusion([ 2, 4, 6, 8, 10]);
+    this.map.setCollision([2, 3, 5, 6, 7, 8, 9, 10], true);
+    this.map.setCollision([2, 4, 11], false);
     this.layer = this.map.createLayer('layer1');
     // layer.debug = true;
     this.layer.resizeWorld();
