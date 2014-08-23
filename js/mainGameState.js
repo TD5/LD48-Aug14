@@ -4,7 +4,7 @@ function MainGameState(game)
     this.sfx = undefined;
     this.jumpEnd = 0;
     this.LASER_POOL_SIZE = 30;
-    this.FIRE_DELAY = 200;
+    this.FIRE_DELAY = 100;
     this.SMALL_LASER_SPEED = 800;
 }
 
@@ -23,8 +23,8 @@ MainGameState.prototype.create = function() {
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
     this.map.addTilesetImage('lvl1tiles');
-    this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10], true);
-    this.map.setCollision([2, 4, 11], false);
+    this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], true);
+    this.map.setCollision([2, 4], false);
     this.layer = this.map.createLayer('layer1');
     // layer.debug = true;
     this.layer.resizeWorld();
@@ -165,10 +165,14 @@ MainGameState.prototype.fire = function()
 MainGameState.prototype.render = function() {
     if (this.smallLaserPool.countDead() !== 0)
     {
-        this.clipText.text = "Clip remaining: " + this.smallLaserPool.countDead();
+        this.clipText.text = "Clip: ";
+        for (var i = 0; i < this.smallLaserPool.countDead(); i++)
+        {
+            this.clipText.text += "|";
+        }
     }
     else
     {
-        this.clipText.text = "CLIP EMPTY";
+        this.clipText.text = "Clip: EMPTY";
     }
 };

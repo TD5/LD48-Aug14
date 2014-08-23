@@ -39,6 +39,6 @@ MainMenuState.prototype.render = function() {
     this.timeElapsed += this.game.time.elapsed;
     var numTitleCharsToShow = Math.max(Math.min(this.titleString.length, -50 + (this.timeElapsed / 100)), 0);
     this.titleText.text = this.titleString.substring(0, numTitleCharsToShow);
-    var numIntroCharsToShow = Math.max(Math.min(this.introString.length, -180 + (this.timeElapsed / 50)), 0);
+    var numIntroCharsToShow = Math.max(Math.min(this.introString.length, -160 + (this.timeElapsed / 50)), 0);
     this.introText.text = this.introString.substring(0, numIntroCharsToShow);
 };
