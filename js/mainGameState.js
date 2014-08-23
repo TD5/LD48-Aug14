@@ -29,6 +29,11 @@ MainGameState.prototype.create = function() {
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
     this.player = this.game.add.sprite(120, 100, 'player');
+    this.player.reset(120, 100, 1);
+    console.log("Game world center x = "+this.game.world.centerX);
+    console.log("Game world center y = "+this.game.world.centerY);
+    console.log("Player x = "+this.player.x);
+    console.log("Player y = "+this.player.y);
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.bounce.y = 0.0;
     this.player.body.collideWorldBounds = true;
