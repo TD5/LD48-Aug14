@@ -88,18 +88,11 @@ MainGameState.prototype.update = function()
     
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
+    this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
     
     // TOOD Handle laser beams colliding with enemies
     
     // TODO Make the lightness of the spikey enemies pulsate
-    
-    if(this.game.physics.arcade.collide(this.enemy, this.player))
-    {
-        this.music.destroy();
-        this.jumpsfx.destroy();
-        this.smallLasersfx.destroy();
-        this.game.state.start('gameOver');
-    }
     
     if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
     {
@@ -170,6 +163,14 @@ MainGameState.prototype.update = function()
     }    
 };
 
+MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
+{
+    if(this.game.physics.arcade.collide(enemy, this.player))
+    {
+        this.game.state.start('gameOver');
+    }
+}
+
 MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser) 
 {
     if (this.game.physics.arcade.collide(smallLaser, this.layer))
@@ -222,7 +223,8 @@ MainGameState.prototype.gaussian = function()
     return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
 }
 
-MainGameState.prototype.render = function() {
+MainGameState.prototype.render = function() 
+{
     if (this.smallLaserPool.countDead() !== 0)
     {
         this.clipText.text = "Clip: ";
@@ -236,3 +238,13 @@ MainGameState.prototype.render = function() {
         this.clipText.text = "Clip: EMPTY";
     }
 };
+
+MainGameState.prototype.shutdown = function() 
+{
+    this.enemies.destroy();
+    this.player.destroy();
+    this.music.destroy();
+    this.smallLaserPool.destroy();
+    this.jumpsfx.destroy();
+    this.smallLasersfx.destroy();
+}
