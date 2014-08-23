@@ -6,7 +6,8 @@ function MainGameState(game)
     this.SMALL_LASER_SPEED = 500;
 }
 
-MainGameState.prototype.thispreload = function() {
+MainGameState.prototype.thispreload = function() 
+{
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
@@ -17,7 +18,8 @@ MainGameState.prototype.thispreload = function() {
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
-MainGameState.prototype.create = function() {
+MainGameState.prototype.create = function() 
+{
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
@@ -58,9 +60,8 @@ MainGameState.prototype.create = function() {
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
     this.clipText.fixedToCamera = true;
     
-    this.enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemySpikes');
-    this.game.physics.enable(this.enemy, Phaser.Physics.ARCADE);
-    this.enemy.body.allowGravity = false;
+    this.createEnemies();
+    
     this.facing = 'left';
     this.running = 'none';
     this.jumping = false;
@@ -70,12 +71,23 @@ MainGameState.prototype.create = function() {
     this.player.frame = 0;
 };
 
-MainGameState.prototype.update = function() {
+MainGameState.prototype.createEnemies = function()
+{
+    this.enemies = this.game.add.group();
+    var enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemySpikes');
+    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+    enemy.body.allowGravity = false;
+    enemy.anchor.setTo(0.5, 0.5);
+    this.enemies.add(enemy);
+}
+
+MainGameState.prototype.update = function() 
+{
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
-    this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemy, this, this.enemy);
+    this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
     
     // TOOD Handle laser beams colliding with enemies
     
@@ -158,14 +170,21 @@ MainGameState.prototype.update = function() {
     }    
 };
 
-MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser) {
+MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser) 
+{
     if (this.game.physics.arcade.collide(smallLaser, this.layer))
     {
         smallLaser.kill();
     }
 }
 
-MainGameState.prototype.smallLaserCollideWithEnemy = function(smallLaser, enemy) {
+MainGameState.prototype.smallLaserCollideWithEnemies = function(smallLaser, enemies) 
+{
+    enemies.forEachAlive(this.smallLaserCollideWithEnemy, this, smallLaser);
+}
+
+MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser) 
+{
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
         enemy.kill();

@@ -7,7 +7,8 @@ function MainMenuState(game)
     
 }
 
-MainMenuState.prototype.thispreload = function() {
+MainMenuState.prototype.thispreload = function() 
+{
     this.game.load.image('mainMenuBackground', 'assets/graphics/mainMenuBackground.png');
     this.game.load.audio('title', ['assets/music/titleTheme.mp3', 'assets/music/titleTheme.ogg']);
 };
@@ -25,11 +26,13 @@ MainMenuState.prototype.create = function() {
     this.timeElapsed = 0;
 };
 
-MainMenuState.prototype.update = function() {
+MainMenuState.prototype.update = function() 
+{
 
 };
 
-MainMenuState.prototype.render = function() {
+MainMenuState.prototype.render = function() 
+{
     this.timeElapsed += this.game.time.elapsed;
     var numTitleCharsToShow = Math.max(Math.min(this.titleString.length, -50 + (this.timeElapsed / 100)), 0);
     this.titleText.text = this.titleString.substring(0, numTitleCharsToShow);
@@ -41,7 +44,8 @@ MainMenuState.prototype.render = function() {
     }
 };
 
-MainMenuState.prototype.shutdown = function() {
+MainMenuState.prototype.shutdown = function() 
+{
     this.music.destroy();
     this.titleText.destroy();
     this.introText.destroy();
