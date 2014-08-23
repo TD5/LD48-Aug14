@@ -13,11 +13,13 @@ MainMenuState.prototype.thispreload = function() {
 };
 
 MainMenuState.prototype.create = function() {
-    console.log("menuCreateStart Game world center x = "+this.game.world.centerX);
-    console.log("menuCreateStart Game world center y = "+this.game.world.centerY);
+    console.log("MB Game world x = "+this.game.world.x);
+    console.log("MB Game world y = "+this.game.world.y);
     this.background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuBackground');
     this.background.anchor.setTo(0.5, 0.5);
     this.game.camera.follow(this.background);
+    console.log("MPF Game world x = "+this.game.world.x);
+    console.log("MPF Game world y = "+this.game.world.y);
     this.music = this.game.add.audio('title');
     this.music.play('',0,1,true);
     this.titleText = this.game.add.text(50, 50, '', { font: 'bold 50px Arial', fill: '#f4fff5' });
@@ -25,8 +27,8 @@ MainMenuState.prototype.create = function() {
     this.introText = this.game.add.text(50, 250, '', { font: '16px Arial', fill: '#cccccc' });
     this.introText.fixedToCamera = true;
     this.timeElapsed = 0;
-    console.log("menuCreateEnd Game world center x = "+this.game.world.centerX);
-    console.log("menuCreateEnd Game world center y = "+this.game.world.centerY);
+    console.log("MA Game world x = "+this.game.world.x);
+    console.log("MA Game world y = "+this.game.world.y);
 };
 
 MainMenuState.prototype.update = function() {
