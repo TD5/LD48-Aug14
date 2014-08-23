@@ -3,7 +3,7 @@ function MainGameState(game)
     this.game = game;
     this.LASER_POOL_SIZE = 30;
     this.FIRE_DELAY = 100;
-    this.SMALL_LASER_SPEED = 800;
+    this.SMALL_LASER_SPEED = 500;
 }
 
 MainGameState.prototype.thispreload = function() {
@@ -74,7 +74,10 @@ MainGameState.prototype.update = function() {
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
-    // TOOD Handle laser beams colliding with things
+    this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
+    this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemy, this, this.enemy);
+    
+    // TOOD Handle laser beams colliding with enemies
     
     // TODO Make the lightness of the spikey enemies pulsate
     
@@ -94,7 +97,7 @@ MainGameState.prototype.update = function() {
         this.player.animations.play('jet');
         this.jumpsfx.play('',0,1,false);
     }
-    else if (!this.cursors.up.isDown && this.player.body.onFloor())
+    else if (this.jumping && this.player.body.onFloor())
     {
         this.jumping = false;
     }
@@ -154,6 +157,20 @@ MainGameState.prototype.update = function() {
         this.fire();
     }    
 };
+
+MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser) {
+    if (this.game.physics.arcade.collide(smallLaser, this.layer))
+    {
+        smallLaser.kill();
+    }
+}
+
+MainGameState.prototype.smallLaserCollideWithEnemy = function(smallLaser, enemy) {
+    if (this.game.physics.arcade.collide(smallLaser, enemy))
+    {
+        enemy.kill();
+    }
+}
 
 MainGameState.prototype.fire = function() 
 {
