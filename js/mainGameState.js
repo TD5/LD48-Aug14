@@ -81,6 +81,22 @@ MainGameState.prototype.createEnemies = function()
     enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
     enemy.animations.play('fluctuate');
     this.enemies.add(enemy);
+    
+    enemy = this.game.add.sprite(this.game.world.x+600, this.game.world.y+350, 'enemy');
+    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+    enemy.body.allowGravity = false;
+    enemy.anchor.setTo(0.5, 0.5);
+    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+    enemy.animations.play('fluctuate');
+    this.enemies.add(enemy);
+    
+    enemy = this.game.add.sprite(this.game.world.x+540, this.game.world.y+420, 'enemy');
+    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+    enemy.body.allowGravity = false;
+    enemy.anchor.setTo(0.5, 0.5);
+    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+    enemy.animations.play('fluctuate');
+    this.enemies.add(enemy);
 }
 
 MainGameState.prototype.update = function() 
@@ -191,6 +207,14 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
         enemy.kill();
+        if (this.facing === 'left') // Hack so that the beams don't slow after impact
+        {
+            smallLaser.body.velocity.x = -this.SMALL_LASER_SPEED;
+        }
+        else
+        {
+            smallLaser.body.velocity.x = this.SMALL_LASER_SPEED;
+        }
     }
 }
 
