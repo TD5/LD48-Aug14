@@ -26,7 +26,7 @@ MainGameState.prototype.create = function() {
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.bounce.y = 0.0;
     this.player.body.collideWorldBounds = true;
-    this.player.body.setSize(50, 90, 5, 5);
+    this.player.body.setSize(50, 90, 0, 5);
     this.player.anchor.setTo(0.5,0.5);
     this.game.camera.follow(this.player);
     this.cursors = this.game.input.keyboard.createCursorKeys();
