@@ -1,7 +1,6 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.sfx = undefined;
     this.jumpEnd = 0;
     this.LASER_POOL_SIZE = 30;
     this.FIRE_DELAY = 100;
@@ -15,6 +14,7 @@ MainGameState.prototype.preload = function() {
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
+    this.game.load.image('enemySpikes', 'assets/graphics/enemySpikes.png');
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -59,6 +59,10 @@ MainGameState.prototype.create = function() {
     
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
     this.clipText.fixedToCamera = true;
+    
+    this.enemy = this.game.add.sprite(400, 400, 'enemySpikes');
+    this.game.physics.enable(this.enemy, Phaser.Physics.ARCADE);
+    this.enemy.body.allowGravity = false;
 };
 
 MainGameState.prototype.update = function() {
@@ -66,6 +70,15 @@ MainGameState.prototype.update = function() {
     this.player.body.velocity.x = 0;
     
     // TOOD Handle laser beams colliding with things
+    
+    // TODO Make the lightness of the spikey enemies pulsate
+    if(this.game.physics.arcade.collide(this.enemy, this.player))
+    {
+        this.music.destroy();
+        this.jumpsfx.destroy();
+        this.smallLasersfx.destroy();
+        this.game.state.add('gameOver', new GameOverState(this.game), true);
+    }
     
     if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
     {

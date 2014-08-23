@@ -1,5 +1,6 @@
 function MainMenuState(game)
 {
+    this.WAIT_PERIOD = 100; //4000;
     this.game = game;
     this.music = undefined;
     this.background = undefined;
@@ -18,7 +19,6 @@ MainMenuState.prototype.create = function() {
     this.background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuBackground');
     this.background.anchor.setTo(0.5, 0.5);
     this.background.inputEnabled = true;
-    this.background.events.onInputDown.add(this.onClicklistener, this);
     this.music = this.game.add.audio('title');
     this.music.play('',0,1,true);
     this.titleText = this.game.add.text(50, 50, '', { font: 'bold 50px Arial', fill: '#f4fff5' });
@@ -26,9 +26,11 @@ MainMenuState.prototype.create = function() {
     this.timeElapsed = 0;
 };
 
-MainMenuState.prototype.onClicklistener = function() {
+MainMenuState.prototype.onPresslistener = function() {
     this.music.destroy();
-    this.game.state.start('mainGame');
+    this.game.input.keyboard.onDownCallback = null;
+    console.log("On down post reset: "+this.game.input.keyboard.onDownCallback);
+    this.game.state.add('mainGame', new MainGameState(this.game), true);
 }
 
 MainMenuState.prototype.update = function() {
@@ -41,4 +43,9 @@ MainMenuState.prototype.render = function() {
     this.titleText.text = this.titleString.substring(0, numTitleCharsToShow);
     var numIntroCharsToShow = Math.max(Math.min(this.introString.length, -160 + (this.timeElapsed / 50)), 0);
     this.introText.text = this.introString.substring(0, numIntroCharsToShow);
+    if (this.timeElapsed > this.WAIT_PERIOD && this.game.input.keyboard.onDownCallback === null)
+    {
+        this.game.input.keyboard.onDownCallback = this.onPresslistener.bind(this);
+        this.background.events.onInputDown.add(this.onPresslistener, this);
+    }
 };
