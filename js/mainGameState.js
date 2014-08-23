@@ -18,8 +18,6 @@ MainGameState.prototype.thispreload = function() {
 };
 
 MainGameState.prototype.create = function() {
-    console.log("GB Game world x = "+this.game.world.x);
-    console.log("GB Game world y = "+this.game.world.y);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
@@ -27,15 +25,9 @@ MainGameState.prototype.create = function() {
     this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], true);
     this.map.setCollision([2, 4], false);
     this.layer = this.map.createLayer('layer1');
-    // layer.debug = true;
-    this.layer.resizeWorld(); // The issue is here!
+    this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
-    this.player = this.game.add.sprite(120, 100, 'player');
-    this.player.reset(120, 100, 1);
-//    console.log("Game world width = "+this.game.world.width);
-//    console.log("Game world height = "+this.game.world.height);
-//    console.log("Player x = "+this.player.x);
-//    console.log("Player y = "+this.player.y);
+    this.player = this.game.add.sprite(this.game.world.x+120, this.game.world.y+150, 'player');
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.bounce.y = 0.0;
     this.player.body.collideWorldBounds = true;
@@ -66,7 +58,7 @@ MainGameState.prototype.create = function() {
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
     this.clipText.fixedToCamera = true;
     
-    this.enemy = this.game.add.sprite(400, 400, 'enemySpikes');
+    this.enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemySpikes');
     this.game.physics.enable(this.enemy, Phaser.Physics.ARCADE);
     this.enemy.body.allowGravity = false;
     this.facing = 'left';
@@ -76,19 +68,16 @@ MainGameState.prototype.create = function() {
     this.lastSmallLaserFiredAt = 0;
     this.player.animations.stop();
     this.player.frame = 0;
-    console.log("GA Game world x = "+this.game.world.x);
-    console.log("GA Game world y = "+this.game.world.y);
 };
 
 MainGameState.prototype.update = function() {
-    console.log("GUA Game world x = "+this.game.world.x);
-    console.log("GUA Game world y = "+this.game.world.y);
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
     // TOOD Handle laser beams colliding with things
     
     // TODO Make the lightness of the spikey enemies pulsate
+    
     if(this.game.physics.arcade.collide(this.enemy, this.player))
     {
         this.music.destroy();
@@ -164,8 +153,6 @@ MainGameState.prototype.update = function() {
     {
         this.fire();
     }    
-    console.log("GUA Game world x = "+this.game.world.x);
-    console.log("GUA Game world y = "+this.game.world.y);
 };
 
 MainGameState.prototype.fire = function() 
@@ -200,8 +187,6 @@ MainGameState.prototype.gaussian = function()
 }
 
 MainGameState.prototype.render = function() {
-    console.log("GRB Game world x = "+this.game.world.x);
-    console.log("GRB Game world y = "+this.game.world.y);
     if (this.smallLaserPool.countDead() !== 0)
     {
         this.clipText.text = "Clip: ";
@@ -214,6 +199,4 @@ MainGameState.prototype.render = function() {
     {
         this.clipText.text = "Clip: EMPTY";
     }
-    console.log("GAU Game world x = "+this.game.world.x);
-    console.log("GAU Game world y = "+this.game.world.y);
 };
