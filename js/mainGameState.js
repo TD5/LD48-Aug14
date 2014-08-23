@@ -9,7 +9,7 @@ MainGameState.prototype.preload = function() {
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.image('player', 'assets/graphics/player.png');
-    
+    this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
 };
 
 MainGameState.prototype.create = function() {
@@ -30,6 +30,8 @@ MainGameState.prototype.create = function() {
     this.player.anchor.setTo(0.5,0.5);
     this.game.camera.follow(this.player);
     this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.music = this.game.add.audio('overworld');
+    this.music.play('',0,1,true);
 };
 
 MainGameState.prototype.update = function() {
