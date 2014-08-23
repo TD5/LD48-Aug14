@@ -1,0 +1,12 @@
+.container { 
+    margin-right: auto; 
+    margin-left: auto; 
+}
+
+canvas {
+    margin: auto;
+}
+
+body {
+    background:black;
+}
