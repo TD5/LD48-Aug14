@@ -18,7 +18,6 @@ MainGameState.prototype.thispreload = function() {
 };
 
 MainGameState.prototype.create = function() {
-    this.jumpEnd = 0;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
     this.map = this.game.add.tilemap('lvl1');
@@ -63,6 +62,13 @@ MainGameState.prototype.create = function() {
     this.enemy = this.game.add.sprite(400, 400, 'enemySpikes');
     this.game.physics.enable(this.enemy, Phaser.Physics.ARCADE);
     this.enemy.body.allowGravity = false;
+    this.facing = 'left';
+    this.running = 'none';
+    this.jumping = false;
+    this.jumpEnd = 0;
+    this.lastSmallLaserFiredAt = 0;
+    this.player.animations.stop();
+    this.player.frame = 0;
 };
 
 MainGameState.prototype.update = function() {
@@ -151,7 +157,6 @@ MainGameState.prototype.update = function() {
 
 MainGameState.prototype.fire = function() 
 {
-    if (this.lastSmallLaserFiredAt === undefined) this.lastSmallLaserFiredAt = 0;
     if (this.game.time.now - this.lastSmallLaserFiredAt < this.FIRE_DELAY)
     {
         return;
