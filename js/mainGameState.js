@@ -83,13 +83,20 @@ MainGameState.prototype.createEnemies = function()
     enemy.animations.play('fluctuate');
     this.enemies.add(enemy);
     
-    enemy = this.game.add.sprite(this.game.world.x+600, this.game.world.y+350, 'enemy');
-    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-    enemy.body.allowGravity = false;
-    enemy.anchor.setTo(0.5, 0.5);
-    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-    enemy.animations.play('fluctuate');
-    this.enemies.add(enemy);
+    
+    for (var i = 0; i < 100; i++) 
+    {
+        enemy = this.game.add.sprite(
+            this.game.world.x+Math.random()*this.game.world.height, 
+            this.game.world.y+Math.random()*this.game.world.width, 
+            'enemy');
+        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+        enemy.body.allowGravity = false;
+        enemy.anchor.setTo(0.5, 0.5);
+        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+        enemy.animations.play('fluctuate');
+        this.enemies.add(enemy);
+    }
     
     enemy = this.game.add.sprite(this.game.world.x+540, this.game.world.y+420, 'enemy');
     this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
@@ -105,7 +112,7 @@ MainGameState.prototype.update = function()
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
-    // TODO Make enemies home in when within range
+    this.enemies.forEachAlive(this.enemyHomeIn, this);
     
     // TODO Be able to aim upwards
     
@@ -182,6 +189,19 @@ MainGameState.prototype.update = function()
     }    
 };
 
+MainGameState.prototype.enemyHomeIn = function(enemy)
+{
+    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 300)
+    {
+        this.game.physics.arcade.accelerateToObject(enemy, this.player, 20, 150, 150)
+    }
+    else
+    {
+        enemy.body.velocity.x = 0;
+        enemy.body.velocity.y = 0;
+    }
+}
+
 MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
 {
     if(this.game.physics.arcade.collide(enemy, this.player))
@@ -208,7 +228,7 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
         enemy.kill();
-        if (this.facing === 'left') // Hack so that the beams don't slow after impact
+        if (smallLaser.body.velocity.x < 0) // Hack so that the beams don't slow after impact
         {
             smallLaser.body.velocity.x = -this.SMALL_LASER_SPEED;
         }
