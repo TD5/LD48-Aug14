@@ -8,5 +8,6 @@ canvas {
 }
 
 body {
-    background:black;
+    background: black;
+    padding-top: 60px;
 }
