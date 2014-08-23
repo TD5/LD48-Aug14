@@ -3,6 +3,9 @@ function MainGameState(game)
     this.game = game;
     this.sfx = undefined;
     this.jumpEnd = 0;
+    this.LASER_POOL_SIZE = 30;
+    this.FIRE_DELAY = 200;
+    this.SMALL_LASER_SPEED = 800;
 }
 
 MainGameState.prototype.preload = function() {
@@ -11,6 +14,7 @@ MainGameState.prototype.preload = function() {
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
+    this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
 };
 
 MainGameState.prototype.create = function() {
@@ -35,14 +39,27 @@ MainGameState.prototype.create = function() {
     this.player.animations.add('jet', [4, 5], 10, true);
     this.game.camera.follow(this.player);
     this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
     this.jumpsfx = this.game.add.audio('jumpjet');
+
+    this.smallLaserPool = this.game.add.group();
+    for(var i = 0; i < this.LASER_POOL_SIZE; i++) {
+        var smallLaserBeam = this.game.add.sprite(0, 0, 'smallLaserBeam');
+        this.smallLaserPool.add(smallLaserBeam);
+        smallLaserBeam.anchor.setTo(0.5, 0.5);
+        this.game.physics.enable(smallLaserBeam, Phaser.Physics.ARCADE);
+        smallLaserBeam.body.allowGravity = false;
+        smallLaserBeam.kill();
+    }
 };
 
 MainGameState.prototype.update = function() {
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
+    
+    // TOOD Handle laser beams colliding with things
     
     if (this.cursors.up.isDown && this.player.body.onFloor() && this.game.time.now > this.jumpEnd)
     {
@@ -71,10 +88,11 @@ MainGameState.prototype.update = function() {
                 this.player.animations.stop();
             }
         }
-        if (this.facing != 'left')
+        if (this.running != 'left')
         {
             this.player.scale.x = Math.abs(this.player.scale.x);
             this.facing = 'left';
+            this.running = 'left';
         }
     }
     else if (this.cursors.right.isDown)
@@ -92,18 +110,50 @@ MainGameState.prototype.update = function() {
                 this.player.animations.stop();
             }
         }
-        if (this.facing != 'right')
+        if (this.running != 'right')
         {
             this.player.scale.x = -Math.abs(this.player.scale.x);
             this.facing = 'right';
+            this.running = 'right';
         }
     }
     else if (!this.jumping)
     {
-        this.facing = 'none';
+        this.running = 'none';
         this.player.animations.stop();
         this.player.frame = 0;
     }
+    
+    if (this.fireButton.isDown)
+    {
+        this.fire();
+    }
+};
+
+MainGameState.prototype.fire = function() 
+{
+    if (this.lastSmallLaserFiredAt === undefined) this.lastSmallLaserFiredAt = 0;
+    if (this.game.time.now - this.lastSmallLaserFiredAt < this.FIRE_DELAY)
+    {
+        return;
+    }
+    this.lastSmallLaserFiredAt = this.game.time.now;
+    var smallLaserBeam = this.smallLaserPool.getFirstDead();
+    if (smallLaserBeam === null || smallLaserBeam === undefined) return;
+    smallLaserBeam.revive();
+    smallLaserBeam.checkWorldBounds = true;
+    smallLaserBeam.outOfBoundsKill = true;
+    if (this.facing === 'left')
+    {
+        smallLaserBeam.reset(this.player.x-this.player.body.halfWidth, this.player.y+7); 
+        smallLaserBeam.body.velocity.x = -this.SMALL_LASER_SPEED;
+    }
+    else
+    {
+        smallLaserBeam.reset(this.player.x+this.player.body.halfWidth, this.player.y+7);
+        smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED;
+    }
+    smallLaserBeam.body.velocity.y = 0;
 };
 
 MainGameState.prototype.render = function() {
