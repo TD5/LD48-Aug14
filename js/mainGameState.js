@@ -95,6 +95,10 @@ MainGameState.prototype.createEnemies = function()
         enemy.anchor.setTo(0.5, 0.5);
         enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
         enemy.animations.play('fluctuate');
+        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500)
+        {
+            enemy.kill();
+        }
         this.enemies.add(enemy);
     }
     
@@ -122,7 +126,7 @@ MainGameState.prototype.update = function()
     
     if (!this.jumping && this.cursors.up.isDown && this.game.time.now > this.jumpEnd)
     {
-        this.player.body.velocity.y = -280;
+        this.player.body.velocity.y += -280;
         this.jumpEnd = this.game.time.now + 1000;
         this.jumping = true;
         this.player.animations.play('jet');
@@ -193,7 +197,7 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
 {
     if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500)
     {
-        this.game.physics.arcade.accelerateToObject(enemy, this.player, 50, 150, 150)
+        this.game.physics.arcade.accelerateToObject(enemy, this.player, 70, 150, 150)
     }
     else
     {
