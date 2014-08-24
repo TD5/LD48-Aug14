@@ -53,7 +53,8 @@ MainGameState.prototype.create = function()
     this.game.physics.enable(this.boss, Phaser.Physics.ARCADE);
     this.boss.body.allowGravity = false;
     this.boss.health = 100; // TODO Increase
-    this.boss.immovable = true;
+    //this.boss.immovable = true;
+    this.boss.body.moves = false;
     this.playerArm.anchor.setTo(0.8,0.28);
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
@@ -330,8 +331,8 @@ MainGameState.prototype.update = function()
         this.bossBattleMusic.play('',0,1,true);
         this.isBossBattle = true;
     }
-    this.boss.x = 4900;
-    this.boss.y = 500;
+//    this.boss.x = 4900;
+//    this.boss.y = 500;
 };
 
 MainGameState.prototype.setArm = function()
@@ -405,6 +406,10 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
         smallLaser.kill();
         this.boss.damage(1);
         this.explosionAt(smallLaser.x, smallLaser.y);
+        if (!this.boss.alive)
+        {
+            this.game.state.start('winState');
+        }
     }
     
 }
