@@ -307,8 +307,14 @@ MainGameState.prototype.fire = function()
     smallLaserBeam.checkWorldBounds = true;
     smallLaserBeam.outOfBoundsKill = true;
     smallLaserBeam.reset(this.player.x, this.player.y);
-    smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED*Math.cos(this.playerArm.rotation);
-    smallLaserBeam.body.velocity.y = this.player.body.velocity.y + this.SMALL_LASER_SPEED*Math.sin(this.playerArm.rotation); //+ Math.floor(this.gaussian() * 80) + 1;
+    var recoil = Math.floor(this.gaussian() * 80) + 1;
+    smallLaserBeam.body.velocity.x = 
+        this.SMALL_LASER_SPEED*Math.cos(this.playerArm.rotation) + 
+        recoil*Math.cos(this.playerArm.rotation+Math.PI/2);
+    smallLaserBeam.body.velocity.y = 
+        this.player.body.velocity.y + 
+        this.SMALL_LASER_SPEED*Math.sin(this.playerArm.rotation) + 
+        recoil*Math.sin(this.playerArm.rotation+Math.PI/2);
     this.smallLasersfx.play('',0,1,false);
 };
 
