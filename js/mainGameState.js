@@ -161,6 +161,20 @@ MainGameState.prototype.createVaf = function()
         vaf.animations.play('fluctuate');
         this.vafs.add(vaf);
     }
+    
+    for (var i = 0; i < 11; i++) 
+    {
+        vaf = this.game.add.sprite(
+            this.game.world.x+2622, 
+            this.game.world.y+2446 - i*160, 
+            'vaf');        
+        this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
+        vaf.body.allowGravity = false;
+        vaf.anchor.setTo(0.5, 0.5);
+        vaf.animations.add('fluctuate', [0, 1, 2, 3, 4], 8, true);
+        vaf.animations.play('fluctuate');
+        this.vafs.add(vaf);
+    }
 }
     
 
@@ -305,11 +319,11 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
 MainGameState.prototype.vafMovePlayer = function(vaf)
 {
     if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 40 &&
-       Math.abs(this.player.body.velocity.y) > 5 &&
+       Math.abs(this.player.body.velocity.y) > 10 &&
             ((this.player.body.velocity.y > -400) || 
-            (this.player.body.velocity.y > 5)))
+            (this.player.body.velocity.y > 20)))
     {
-        this.player.body.velocity.y -= 17;
+        this.player.body.velocity.y -= 16;
     }
 }
 
