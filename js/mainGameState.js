@@ -1,8 +1,8 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.LASER_POOL_SIZE = 20;
-    this.FIRE_DELAY = 120;
+    this.LASER_POOL_SIZE = 40;
+    this.FIRE_DELAY = 100;
     this.SMALL_LASER_SPEED = 500;
 }
 
