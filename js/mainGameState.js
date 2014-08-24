@@ -3,7 +3,7 @@ function MainGameState(game)
     this.game = game;
     this.LASER_POOL_SIZE = 40;
     this.FIRE_DELAY = 100;
-    this.ENEMY_SPAWN_DELAY = 1000;
+    this.ENEMY_SPAWN_DELAY = 600;
     this.SMALL_LASER_SPEED = 700;
     this.ENEMY_ATTRACTION_ZONE = 900;
     this.MAX_ENEMIES_SPAWNED = 20;

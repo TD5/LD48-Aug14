@@ -15,6 +15,7 @@ WinState.prototype.create = function()
 {
     //this.music = this.game.add.audio('title');
     //this.music.play('',0,1,true);
+    this.game.stage.backgroundColor = '#a7474a';
     this.titleText = this.game.add.text(425, 275, this.titleString, { font: 'bold 50px Arial', fill: '#f4fff5' });
     this.titleText.anchor.setTo(0.5, 0.5);
     this.msgText = this.game.add.text(425, 375, this.msgString, { font: '16px Arial', fill: '#f4fff5' });
