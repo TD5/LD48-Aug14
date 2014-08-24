@@ -11,6 +11,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
+    this.game.load.image('playerArm', 'assets/graphics/arm.png');
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
@@ -38,11 +39,16 @@ MainGameState.prototype.create = function()
     this.player.animations.add('run', [0, 1, 2, 3], 10, true);
     this.player.animations.add('stop', [0], 10, true);
     this.player.animations.add('jet', [4, 5], 10, true);
+    this.playerArm = this.game.add.sprite(this.player.x + 8, this.player.y + 36, 'playerArm');
+    this.playerArm.anchor.setTo(0.8,0.28);
+    this.playerArm.x = this.player.x + 8;
+    this.playerArm.y = this.player.y + 36;
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
     this.cursors = this.game.input.keyboard.createCursorKeys();
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.lockButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
     this.jumpsfx = this.game.add.audio('jumpjet');
@@ -64,43 +70,34 @@ MainGameState.prototype.create = function()
     this.createEnemies();
     
     this.player.scale.x = -Math.abs(this.player.scale.x);
-    this.facing = 'right';
-    this.facingOld = 'right';
+    this.setFacing('right');
     this.running = 'none';
     this.jumping = false;
     this.jumpEnd = 0;
     this.lastSmallLaserFiredAt = 0;
     this.player.animations.stop();
     this.player.frame = 0;
+    
+    this.player.bringToTop();
+    this.playerArm.bringToTop();
+    
+    this.unlockTime = 0;
+    
+    // TODO Separate arm from the rest of the player
 };
 
 MainGameState.prototype.setFacing = function(facing)
 {
-    if (this.facing !== 'up')
-    {
-        this.facingOld = this.facing;
-    }
     this.facing = facing;
     if (facing === 'left')
     {
         this.player.scale.x = Math.abs(this.player.scale.x);
+        this.playerArm.scale.x = Math.abs(this.playerArm.scale.x);
     }
     else if (facing === 'right')
     {
         this.player.scale.x = -Math.abs(this.player.scale.x);
-    }
-    else if (facing === 'up')
-    {
-        if (this.facingOld === 'left')
-        {
-            this.player.scale.x = Math.abs(this.player.scale.x);
-        }
-        else if (this.facingOld === 'right')
-        {
-            this.player.scale.x = -Math.abs(this.player.scale.x);
-        }
-        this.player.animations.stop();
-        this.player.frame = 6;
+        this.playerArm.scale.x = -Math.abs(this.playerArm.scale.x);
     }
 }
 
@@ -145,6 +142,16 @@ MainGameState.prototype.createEnemies = function()
 
 MainGameState.prototype.update = function() 
 {
+    if (!this.game.input.mouse.locked && this.lockButton.justPressed(100))
+    {
+        this.game.input.mouse.requestPointerLock();
+        this.unlockTime = this.game.time.now + 800;
+    }
+    if (this.pointerLocked && this.unlockTime < this.game.time.now && this.lockButton.justPressed(100))
+    {
+        this.game.input.mouse.releasePointerLock();
+    }
+    
     this.game.physics.arcade.collide(this.player, this.layer);
     this.player.body.velocity.x = 0;
     
@@ -169,12 +176,7 @@ MainGameState.prototype.update = function()
         this.jumping = false;
     }
     
-    if (this.cursors.up.isDown)
-    {
-        this.setFacing('up');
-        this.running = 'none';
-    }
-    else if (this.cursors.left.isDown)
+    if (this.cursors.left.isDown)
     {
         this.player.body.velocity.x = -150;
         if (!this.jumping)
@@ -215,25 +217,32 @@ MainGameState.prototype.update = function()
             this.running = 'right';
         }
     }
-    else if (this.facing === 'up') // Not pressing any directional buttons but still facing up
-    {
-        this.setFacing(this.facingOld);
-        this.running = 'none';
-        this.player.animations.stop();
-        this.player.frame = 0;
-    }
     else if (!this.jumping)
     {
         this.running = 'none';
         this.player.animations.stop();
         this.player.frame = 0;
     }
-    
+    this.setArm();
     if (this.fireButton.isDown)
     {
         this.fire();
     }    
 };
+
+MainGameState.prototype.setArm = function()
+{
+    if (this.facing === 'right')
+    {
+        this.playerArm.x = this.player.x - 8;
+    }
+    else
+    {
+        this.playerArm.x = this.player.x + 8;
+    }
+    this.playerArm.y = this.player.y - this.player.body.halfHeight + 36;
+    this.playerArm.rotation = this.game.physics.arcade.angleBetween(this.playerArm, {x: game.input.x, y: game.input.y});
+}
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
@@ -297,24 +306,9 @@ MainGameState.prototype.fire = function()
     smallLaserBeam.revive();
     smallLaserBeam.checkWorldBounds = true;
     smallLaserBeam.outOfBoundsKill = true;
-    if (this.facing === 'left')
-    {
-        smallLaserBeam.reset(this.player.x-this.player.body.halfWidth, this.player.y+7); 
-        smallLaserBeam.body.velocity.x = -this.SMALL_LASER_SPEED;
-        smallLaserBeam.body.velocity.y = this.player.body.velocity.y + Math.floor(this.gaussian() * 80) + 1;
-    }
-    else if (this.facing === 'right')
-    {
-        smallLaserBeam.reset(this.player.x+this.player.body.halfWidth, this.player.y+7);
-        smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED;
-        smallLaserBeam.body.velocity.y = this.player.body.velocity.y + Math.floor(this.gaussian() * 80) + 1;
-    }
-    else if (this.facing === 'up')
-    {
-        smallLaserBeam.reset(this.player.x, this.player.y-this.player.body.halfHeight);
-        smallLaserBeam.body.velocity.y = -this.SMALL_LASER_SPEED;
-        smallLaserBeam.body.velocity.x = this.player.body.velocity.x + Math.floor(this.gaussian() * 80) + 1;
-    }
+    smallLaserBeam.reset(this.player.x, this.player.y);
+    smallLaserBeam.body.velocity.x = this.SMALL_LASER_SPEED*Math.cos(this.playerArm.rotation);
+    smallLaserBeam.body.velocity.y = this.player.body.velocity.y + this.SMALL_LASER_SPEED*Math.sin(this.playerArm.rotation); //+ Math.floor(this.gaussian() * 80) + 1;
     this.smallLasersfx.play('',0,1,false);
 };
 
@@ -341,6 +335,10 @@ MainGameState.prototype.render = function()
 
 MainGameState.prototype.shutdown = function() 
 {
+    if (this.game.input.mouse.locked)
+    {
+        this.game.input.mouse.releaselockerLock();
+    }
     this.enemies.destroy();
     this.player.destroy();
     this.music.destroy();
