@@ -35,7 +35,7 @@ WinState.prototype.render = function()
 
 };
 
-MainMenuState.prototype.shutdown = function() 
+WinState.prototype.shutdown = function() 
 {
     this.music.destroy();
 };
