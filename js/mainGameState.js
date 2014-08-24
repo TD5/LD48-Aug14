@@ -583,4 +583,5 @@ MainGameState.prototype.shutdown = function()
     this.playerArm.destroy();
     this.bossBattleMusic.destroy();
     this.bossHurtsfx.destroy();
+    this.bossBulletPool.destroy();
 }
