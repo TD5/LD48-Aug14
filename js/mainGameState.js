@@ -1,8 +1,8 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.LASER_POOL_SIZE = 15;
-    this.FIRE_DELAY = 100;
+    this.LASER_POOL_SIZE = 20;
+    this.FIRE_DELAY = 120;
     this.SMALL_LASER_SPEED = 500;
 }
 
@@ -400,18 +400,18 @@ MainGameState.prototype.gaussian = function()
 
 MainGameState.prototype.render = function() 
 {
-    if (this.smallLaserPool.countDead() !== 0)
-    {
-        this.clipText.text = "Clip: ";
-        for (var i = 0; i < this.smallLaserPool.countDead(); i++)
-        {
-            this.clipText.text += "|";
-        }
-    }
-    else
-    {
-        this.clipText.text = "Clip: EMPTY";
-    }
+//    if (this.smallLaserPool.countDead() !== 0)
+//    {
+//        this.clipText.text = "Clip: ";
+//        for (var i = 0; i < this.smallLaserPool.countDead(); i++)
+//        {
+//            this.clipText.text += "|";
+//        }
+//    }
+//    else
+//    {
+//        this.clipText.text = "Clip: EMPTY";
+//    }
     this.game.debug.text(game.time.fps, 2, 100, "#00ff00");
 };
 
@@ -425,6 +425,10 @@ MainGameState.prototype.shutdown = function()
     this.player.destroy();
     this.music.destroy();
     this.smallLaserPool.destroy();
+    this.enemies.destroy();
+    this.explosionsPool.destroy();
     this.jumpsfx.destroy();
     this.smallLasersfx.destroy();
+    this.map.destroy();
+    this.playerArm.destroy();
 }
