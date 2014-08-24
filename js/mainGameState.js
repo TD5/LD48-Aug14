@@ -27,7 +27,7 @@ MainGameState.prototype.create = function()
     this.map = this.game.add.tilemap('lvl1');
     this.map.addTilesetImage('lvl1tiles');
     this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18], true);
-    this.map.setCollision([2, 4, 12, 13, 14], false);
+    this.map.setCollision([2, 4, 12, 13, 14, 19, 20, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40], false);
     this.layer = this.map.createLayer('layer1');
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
@@ -162,7 +162,7 @@ MainGameState.prototype.update = function()
     
     if (!this.jumping && this.jumpButton.isDown && this.game.time.now > this.jumpEnd)
     {
-        this.player.body.velocity.y += -280;
+        this.player.body.velocity.y += -340;
         this.jumpEnd = this.game.time.now + 1000;
         this.jumping = true;
         this.player.animations.play('jet');
