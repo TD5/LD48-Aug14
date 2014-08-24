@@ -41,14 +41,13 @@ MainGameState.prototype.create = function()
     this.player.animations.add('jet', [4, 5], 10, true);
     this.playerArm = this.game.add.sprite(this.player.x + 8, this.player.y + 36, 'playerArm');
     this.playerArm.anchor.setTo(0.8,0.28);
-    this.playerArm.x = this.player.x + 8;
-    this.playerArm.y = this.player.y + 36;
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
-    this.cursors = this.game.input.keyboard.createCursorKeys();
-    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+    this.leftButton = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+    this.rightButton = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
     this.lockButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
+    this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
     this.jumpsfx = this.game.add.audio('jumpjet');
@@ -85,8 +84,7 @@ MainGameState.prototype.create = function()
     this.playerArm.bringToTop();
     
     this.unlockTime = 0;
-    
-    // TODO Separate arm from the rest of the player
+    this.setArm();
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -107,15 +105,7 @@ MainGameState.prototype.setFacing = function(facing)
 MainGameState.prototype.createEnemies = function()
 {
     this.enemies = this.game.add.group();
-    var enemy = this.game.add.sprite(this.game.world.x+400, this.game.world.y+400, 'enemy');
-    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-    enemy.body.allowGravity = false;
-    enemy.anchor.setTo(0.5, 0.5);
-    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-    enemy.animations.play('fluctuate');
-    this.enemies.add(enemy);
-    
-    
+    var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
         enemy = this.game.add.sprite(
@@ -127,21 +117,15 @@ MainGameState.prototype.createEnemies = function()
         enemy.anchor.setTo(0.5, 0.5);
         enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
         enemy.animations.play('fluctuate');
-        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500)
+        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+            this.game.physics.arcade.collide(enemy, this.layer))
         {
             enemy.kill();
         }
         this.enemies.add(enemy);
     }
-    
-    enemy = this.game.add.sprite(this.game.world.x+540, this.game.world.y+420, 'enemy');
-    this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-    enemy.body.allowGravity = false;
-    enemy.anchor.setTo(0.5, 0.5);
-    enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-    enemy.animations.play('fluctuate');
-    this.enemies.add(enemy);
 }
+    
 
 MainGameState.prototype.update = function() 
 {
@@ -179,7 +163,7 @@ MainGameState.prototype.update = function()
         this.jumping = false;
     }
     
-    if (this.cursors.left.isDown)
+    if (this.leftButton.isDown)
     {
         this.player.body.velocity.x = -150;
         if (!this.jumping)
@@ -199,7 +183,7 @@ MainGameState.prototype.update = function()
             this.running = 'left';
         }
     }
-    else if (this.cursors.right.isDown)
+    else if (this.rightButton.isDown)
     {
         this.player.body.velocity.x = 150;
 
@@ -244,7 +228,7 @@ MainGameState.prototype.setArm = function()
         this.playerArm.x = this.player.x + 8;
     }
     this.playerArm.y = this.player.y - this.player.body.halfHeight + 36;
-    this.playerArm.rotation = this.game.physics.arcade.angleBetween(this.playerArm, {x: game.input.x, y: game.input.y});
+    this.playerArm.rotation = this.game.physics.arcade.angleBetween(this.playerArm, {x: this.game.input.worldX, y: this.game.input.worldY});
 }
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
@@ -258,6 +242,7 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
         enemy.body.velocity.x = 0;
         enemy.body.velocity.y = 0;
     }
+    this.game.physics.arcade.collide(enemy, this.layer);
 }
 
 MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
@@ -309,17 +294,18 @@ MainGameState.prototype.fire = function()
     smallLaserBeam.revive();
     smallLaserBeam.checkWorldBounds = true;
     smallLaserBeam.outOfBoundsKill = true;
+    var rotation = this.playerArm.rotation;
     smallLaserBeam.reset(
-        this.playerArm.x + 38*Math.cos(this.playerArm.rotation) - 16*Math.sin(this.playerArm.rotation), 
-        this.playerArm.y + 38*Math.sin(this.playerArm.rotation) + 16*Math.cos(this.playerArm.rotation));
+        this.playerArm.x + 38*Math.cos(rotation) - 16*Math.sin(rotation), 
+        this.playerArm.y + 38*Math.sin(rotation) + 16*Math.cos(rotation));
     var recoil = Math.floor(this.gaussian() * 80) + 1;
     smallLaserBeam.body.velocity.x = 
-        this.SMALL_LASER_SPEED*Math.cos(this.playerArm.rotation) + 
-        recoil*Math.cos(this.playerArm.rotation+Math.PI/2);
+        this.SMALL_LASER_SPEED*Math.cos(rotation) + 
+        recoil*Math.cos(rotation+Math.PI/2);
     smallLaserBeam.body.velocity.y = 
         this.player.body.velocity.y + 
-        this.SMALL_LASER_SPEED*Math.sin(this.playerArm.rotation) + 
-        recoil*Math.sin(this.playerArm.rotation+Math.PI/2);
+        this.SMALL_LASER_SPEED*Math.sin(rotation) + 
+        recoil*Math.sin(rotation+Math.PI/2);
     this.smallLasersfx.play('',0,1,false);
 };
 
