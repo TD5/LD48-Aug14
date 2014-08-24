@@ -48,7 +48,7 @@ MainGameState.prototype.create = function()
     this.leftButton = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
     this.rightButton = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
     this.lockButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
-    this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.spaceButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
     this.jumpsfx = this.game.add.audio('jumpjet');
@@ -224,7 +224,7 @@ MainGameState.prototype.update = function()
         this.player.frame = 0;
     }
     this.setArm();
-    if (this.fireButton.isDown)
+    if (this.spaceButton.isDown || this.game.input.mouse.button === Phaser.Mouse.LEFT_BUTTON)
     {
         this.fire();
     }    
