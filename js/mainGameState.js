@@ -285,14 +285,8 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
         enemy.kill();
-        if (smallLaser.body.velocity.x < 0) // Hack so that the beams don't slow after impact
-        {
-            smallLaser.body.velocity.x = -this.SMALL_LASER_SPEED;
-        }
-        else
-        {
-            smallLaser.body.velocity.x = this.SMALL_LASER_SPEED;
-        }
+        smallLaser.kill();
+        // TODO Make an explosion
     }
 }
 
