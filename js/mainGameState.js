@@ -330,8 +330,8 @@ MainGameState.prototype.update = function()
         this.bossBattleMusic.play('',0,1,true);
         this.isBossBattle = true;
     }
-    this.boss.body.velocity.x = 0;
-    this.boss.body.velocity.y = 0;
+    this.boss.x = 4900;
+    this.boss.y = 500;
 };
 
 MainGameState.prototype.setArm = function()
