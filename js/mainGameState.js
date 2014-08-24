@@ -54,6 +54,8 @@ MainGameState.prototype.create = function()
     this.jumpsfx = this.game.add.audio('jumpjet');
     this.smallLasersfx = this.game.add.audio('smallLaserBeamSfx');
 
+    this.player.bringToTop();
+    this.playerArm.bringToTop();
     this.smallLaserPool = this.game.add.group();
     for(var i = 0; i < this.LASER_POOL_SIZE; i++) {
         var smallLaserBeam = this.game.add.sprite(0, 0, 'smallLaserBeam');
@@ -61,6 +63,7 @@ MainGameState.prototype.create = function()
         smallLaserBeam.anchor.setTo(0.5, 0.5);
         this.game.physics.enable(smallLaserBeam, Phaser.Physics.ARCADE);
         smallLaserBeam.body.allowGravity = false;
+        smallLaserBeam.bringToTop();
         smallLaserBeam.kill();
     }
     
@@ -306,7 +309,9 @@ MainGameState.prototype.fire = function()
     smallLaserBeam.revive();
     smallLaserBeam.checkWorldBounds = true;
     smallLaserBeam.outOfBoundsKill = true;
-    smallLaserBeam.reset(this.player.x, this.player.y);
+    smallLaserBeam.reset(
+        this.playerArm.x + 38*Math.cos(this.playerArm.rotation) - 16*Math.sin(this.playerArm.rotation), 
+        this.playerArm.y + 38*Math.sin(this.playerArm.rotation) + 16*Math.cos(this.playerArm.rotation));
     var recoil = Math.floor(this.gaussian() * 80) + 1;
     smallLaserBeam.body.velocity.x = 
         this.SMALL_LASER_SPEED*Math.cos(this.playerArm.rotation) + 
