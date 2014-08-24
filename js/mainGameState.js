@@ -27,7 +27,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.spritesheet('boss', 'assets/graphics/boss.png', 320, 320);
     this.game.load.spritesheet('enemy', 'assets/graphics/enemy.png', 40, 40);
     this.game.load.spritesheet('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
-    this.game.load.spritesheet('bossBullet', 'assets/graphics/bossBullet.png', 40, 40);
+    this.game.load.spritesheet('bossBullet', 'assets/graphics/bossBullet.png', 20, 20);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -506,9 +506,10 @@ MainGameState.prototype.bossFire = function()
         bossBullet.reset(this.boss.x, this.boss.y);
         var angle = Math.floor(Math.random() * 2 * Math.PI);
         bossBullet.body.velocity.x = 
-            this.BOSS_BULLET_SPEED*Math.cos(rotation);
+            this.BOSS_BULLET_SPEED*Math.cos(angle);
         bossBullet.body.velocity.y = 
-            this.BOSS_BULLET_SPEED*Math.sin(rotation);
+            this.BOSS_BULLET_SPEED*Math.sin(angle);
+        bossBullet.animations.play('spin');
     }
 };
 
