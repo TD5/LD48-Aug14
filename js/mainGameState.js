@@ -17,6 +17,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.audio('bossBattle', ['assets/music/bossBattle.mp3', 'assets/music/bossBattle.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
+    this.game.load.image('boss', 'assets/graphics/boss.png');
     this.game.load.game.load.spritesheet ('enemy', 'assets/graphics/enemy.png', 40, 40);
     this.game.load.game.load.spritesheet ('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
@@ -44,6 +45,11 @@ MainGameState.prototype.create = function()
     this.player.animations.add('stop', [0], 10, true);
     this.player.animations.add('jet', [4, 5], 10, true);
     this.playerArm = this.game.add.sprite(this.player.x + 8, this.player.y + 36, 'playerArm');
+    this.boss = this.game.add.sprite(4900, 500, 'boss');
+    this.boss.anchor.setTo(0.5, 0.5);
+    this.game.physics.enable(this.boss, Phaser.Physics.ARCADE);
+    this.boss.body.allowGravity = false;
+    this.boss.health = 1000;
     this.playerArm.anchor.setTo(0.8,0.28);
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
@@ -129,21 +135,21 @@ MainGameState.prototype.createEnemies = function()
     var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
-        enemy = this.game.add.sprite(
-            this.game.world.x+Math.random()*this.game.world.height, 
-            this.game.world.y+Math.random()*this.game.world.width, 
-            'enemy');
-        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.allowGravity = false;
-        enemy.anchor.setTo(0.5, 0.5);
-        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-        enemy.animations.play('fluctuate');
-        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
-            this.game.physics.arcade.collide(enemy, this.layer))
-        {
-            enemy.kill();
-        }
-        this.enemies.add(enemy);
+//        enemy = this.game.add.sprite(
+//            this.game.world.x+Math.random()*this.game.world.height, 
+//            this.game.world.y+Math.random()*this.game.world.width, 
+//            'enemy');
+//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+//        enemy.body.allowGravity = false;
+//        enemy.anchor.setTo(0.5, 0.5);
+//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+//        enemy.animations.play('fluctuate');
+//        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+//            this.game.physics.arcade.collide(enemy, this.layer))
+//        {
+//            enemy.kill();
+//        }
+//        this.enemies.add(enemy);
     }
 }
 
@@ -178,6 +184,20 @@ MainGameState.prototype.createVaf = function()
         vaf.animations.play('fluctuate');
         this.vafs.add(vaf);
     }
+    
+    for (var i = 0; i < 6; i++) 
+    {
+        vaf = this.game.add.sprite(
+            this.game.world.x+5568, 
+            this.game.world.y+1614 - i*170, 
+            'vaf');        
+        this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
+        vaf.body.allowGravity = false;
+        vaf.anchor.setTo(0.5, 0.5);
+        vaf.animations.add('fluctuate', [0, 1, 2, 3, 4], 8, true);
+        vaf.animations.play('fluctuate');
+        this.vafs.add(vaf);
+    }
 }
     
 
@@ -194,6 +214,7 @@ MainGameState.prototype.update = function()
     }
     
     this.game.physics.arcade.collide(this.player, this.layer);
+    this.game.physics.arcade.collide(this.player, this.boss);
     this.player.body.velocity.x = 0;
     
     this.enemies.forEachAlive(this.enemyHomeIn, this);
@@ -201,6 +222,10 @@ MainGameState.prototype.update = function()
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
     this.vafs.forEachAlive(this.vafMovePlayer, this);
+    
+    // TODO Small lasers collide with boss and damage() it by 1
+    // TODO Boss spawns enemies if player is nearby
+    // TODO Show health remaining (increase flash rate of boss?)
     
     if (!this.jumping && this.jumpButton.isDown && this.game.time.now > this.jumpEnd)
     {
