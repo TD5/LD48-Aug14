@@ -156,9 +156,6 @@ MainGameState.prototype.update = function()
     this.player.body.velocity.x = 0;
     
     this.enemies.forEachAlive(this.enemyHomeIn, this);
-    
-    // TODO Be able to aim upwards
-    
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
@@ -260,7 +257,7 @@ MainGameState.prototype.setArm = function()
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
-    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500)
+    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 900)
     {
         this.game.physics.arcade.accelerateToObject(enemy, this.player, 70, 150, 150)
     }
