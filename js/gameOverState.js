@@ -25,7 +25,7 @@ GameOverState.prototype.update = function()
 {
     if (this.game.input.activePointer.isDown)
     {
-        this.game.state.start('mainMenu', true);
+        this.game.state.start('mainGame', true);
     }
 };
 
