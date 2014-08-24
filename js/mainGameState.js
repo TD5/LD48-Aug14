@@ -2,9 +2,9 @@ function MainGameState(game)
 {
     this.game = game;
     this.LASER_POOL_SIZE = 40;
-    this.BOSS_BULLET_POOL_SIZE = 40;
+    this.BOSS_BULLET_POOL_SIZE = 50;
     this.FIRE_DELAY = 100;
-    this.BOSS_FIRE_DELAY = 100;
+    this.BOSS_FIRE_DELAY = 80;
     this.ENEMY_SPAWN_DELAY = 600;
     this.SMALL_LASER_SPEED = 700;
     this.BOSS_BULLET_SPEED = 450;
