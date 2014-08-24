@@ -1,7 +1,7 @@
 function MainGameState(game)
 {
     this.game = game;
-    this.LASER_POOL_SIZE = 30;
+    this.LASER_POOL_SIZE = 15;
     this.FIRE_DELAY = 100;
     this.SMALL_LASER_SPEED = 500;
 }
@@ -28,7 +28,7 @@ MainGameState.prototype.create = function()
     this.map = this.game.add.tilemap('lvl1');
     this.map.addTilesetImage('lvl1tiles');
     this.map.setCollision([1, 3, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18], true);
-    this.map.setCollision([2, 4, 12, 13, 14, 19, 20, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40], false);
+    this.map.setCollision([2, 4, 12, 13, 14, 19, 20, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40], false);
     this.layer = this.map.createLayer('layer1');
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
@@ -100,6 +100,8 @@ MainGameState.prototype.create = function()
     
     this.unlockTime = 0;
     this.setArm();
+    
+    this.game.time.advancedTiming = true;
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -410,13 +412,8 @@ MainGameState.prototype.render = function()
     {
         this.clipText.text = "Clip: EMPTY";
     }
-    //this.vafs.forEachAlive(this.printLocation, this);
+    this.game.debug.text(game.time.fps, 2, 100, "#00ff00");
 };
-
-//MainGameState.prototype.printLocation = function(obj)
-//{
-//    //console.log("("+obj.x+", "+obj.y+")");
-//};
 
 MainGameState.prototype.shutdown = function() 
 {
