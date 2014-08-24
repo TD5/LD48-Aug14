@@ -10,7 +10,7 @@ function MainGameState(game)
     this.BOSS_BULLET_SPEED = 450;
     this.ENEMY_ATTRACTION_ZONE = 900;
     this.MAX_ENEMIES_SPAWNED = 20;
-}
+};
 
 MainGameState.prototype.thispreload = function() 
 {
@@ -154,7 +154,7 @@ MainGameState.prototype.setFacing = function(facing)
         this.player.scale.x = -Math.abs(this.player.scale.x);
         this.playerArm.scale.x = -Math.abs(this.playerArm.scale.x);
     }
-}
+};
 
 MainGameState.prototype.createEnemies = function()
 {
@@ -195,7 +195,7 @@ MainGameState.prototype.createEnemies = function()
         enemy.spawnedByBoss = true;
         this.enemies.add(enemy);
     }
-}
+};
 
 MainGameState.prototype.createVaf = function()
 {
@@ -242,7 +242,7 @@ MainGameState.prototype.createVaf = function()
         vaf.animations.play('fluctuate');
         this.vafs.add(vaf);
     }
-}
+};
     
 
 MainGameState.prototype.update = function() 
@@ -267,6 +267,8 @@ MainGameState.prototype.update = function()
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithBoss, this);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
     this.vafs.forEachAlive(this.vafMovePlayer, this);
+    this.bossBulletPool.forEachAlive(this.bossBulletCollideWithLayer, this);
+    this.bossBulletPool.forEachAlive(this.bossBulletCollideWithPlayer, this);
     
     this.bossSpawnEnemies();
     this.bossFire();
@@ -380,7 +382,7 @@ MainGameState.prototype.setArm = function()
             this.playerArm, 
             {x: this.game.input.worldX, y: this.game.input.worldY}) + Math.PI;
     }
-}
+};
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
@@ -394,7 +396,7 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
         enemy.body.velocity.y = 0;
     }
     this.game.physics.arcade.collide(enemy, this.layer);
-}
+};
 
 MainGameState.prototype.bossSpawnEnemies = function()
 {
@@ -413,7 +415,7 @@ MainGameState.prototype.bossSpawnEnemies = function()
             this.boss.x + Math.floor(Math.random() * 300)-150, 
             this.boss.y + Math.floor(Math.random() * 300)-150);
     }
-}
+};
 
 MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
 {
@@ -430,7 +432,15 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
         }
     }
     
-}
+};
+
+MainGameState.prototype.bossBulletCollideWithPlayer = function(bossBullet)
+{
+    if(this.game.physics.arcade.collide(bossBullet, this.player))
+    {
+        this.game.state.start('gameOver');
+    }
+};
 
 MainGameState.prototype.vafMovePlayer = function(vaf)
 {
@@ -445,7 +455,7 @@ MainGameState.prototype.vafMovePlayer = function(vaf)
             this.player.body.velocity.y -= 8;
         }
     }
-}
+};
 
 MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
 {
@@ -453,7 +463,7 @@ MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
     {
         this.game.state.start('gameOver');
     }
-}
+};
 
 MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser) 
 {
@@ -462,7 +472,16 @@ MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser)
         smallLaser.kill();
         this.explosionAt(smallLaser.x, smallLaser.y);
     }
-}
+};
+
+MainGameState.prototype.bossBulletCollideWithLayer = function(bossBullet) 
+{
+    if (this.game.physics.arcade.collide(bossBullet, this.layer))
+    {
+        bossBullet.kill();
+        this.explosionAt(bossBullet.x, bossBullet.y);
+    }
+};
 
 MainGameState.prototype.smallLaserCollideWithEnemies = function(smallLaser, enemies) 
 {
@@ -478,7 +497,7 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
         enemy.kill();
         smallLaser.kill();
     }
-}
+};
 
 MainGameState.prototype.explosionAt = function(x, y)
 {
@@ -490,7 +509,7 @@ MainGameState.prototype.explosionAt = function(x, y)
     explosion.reset(x, y);
     explosion.animations.play('explode', 50, false, true);
     //this.explosionsfx.play('',0,1,false);
-}
+};
 
 MainGameState.prototype.bossFire = function() 
 {
@@ -558,7 +577,7 @@ MainGameState.prototype.fire = function()
 MainGameState.prototype.gaussian = function()
 {
     return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
-}
+};
 
 MainGameState.prototype.render = function() 
 {
@@ -584,4 +603,4 @@ MainGameState.prototype.shutdown = function()
     this.bossBattleMusic.destroy();
     this.bossHurtsfx.destroy();
     this.bossBulletPool.destroy();
-}
+};
