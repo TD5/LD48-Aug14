@@ -11,6 +11,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
     this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
+    this.game.load.game.load.spritesheet ('explosion', 'assets/graphics/explosion.png', 30, 30);
     this.game.load.image('playerArm', 'assets/graphics/arm.png');
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
@@ -64,6 +65,18 @@ MainGameState.prototype.create = function()
         smallLaserBeam.body.allowGravity = false;
         smallLaserBeam.bringToTop();
         smallLaserBeam.kill();
+    }
+    
+    this.explosionsPool = this.game.add.group();
+    for(var i = 0; i < this.LASER_POOL_SIZE; i++) {
+        var explosion = this.game.add.sprite(0, 0, 'explosion');
+        this.explosionsPool.add(explosion);
+        explosion.anchor.setTo(0.5, 0.5);
+        this.game.physics.enable(explosion, Phaser.Physics.ARCADE);
+        explosion.body.allowGravity = false;
+        explosion.animations.add('explode', [0, 1, 2, 3, 4, 5, 6], 50, false);
+        explosion.bringToTop();
+        explosion.kill();
     }
     
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
@@ -284,9 +297,18 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
 {
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
+        var explosion = this.explosionsPool.getFirstDead();
+        if (explosion === null || explosion === undefined) return;
+        explosion.revive();
+        explosion.checkWorldBounds = true;
+        explosion.outOfBoundsKill = true;
+        explosion.reset(
+            enemy.x, 
+            enemy.y);
         enemy.kill();
         smallLaser.kill();
-        // TODO Make an explosion
+        explosion.animations.play('explode', 50, false, true);
+        //this.explosionsfx.play('',0,1,false);
     }
 }
 
