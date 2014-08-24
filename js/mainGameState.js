@@ -19,6 +19,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('bossBattle', ['assets/music/bossBattle.mp3', 'assets/music/bossBattle.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
+    this.game.load.audio('bossHurt', ['assets/sounds/bossHurt.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
     this.game.load.spritesheet('boss', 'assets/graphics/boss.png', 320, 320);
     this.game.load.spritesheet('enemy', 'assets/graphics/enemy.png', 40, 40);
@@ -70,6 +71,7 @@ MainGameState.prototype.create = function()
     this.music.play('',0,1,true);
     this.bossBattleMusic = this.game.add.audio('bossBattle');
     this.jumpsfx = this.game.add.audio('jumpjet');
+    this.bossHurtsfx = this.game.add.audio('bossHurt');
     this.smallLasersfx = this.game.add.audio('smallLaserBeamSfx');
 
     this.player.bringToTop();
@@ -406,6 +408,7 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
     {
         smallLaser.kill();
         this.boss.damage(1);
+        this.bossHurtsfx.play('',0,1,false);
         this.boss.frame = (this.boss.frame + 1) % 2;
         this.explosionAt(smallLaser.x, smallLaser.y);
         if (!this.boss.alive)
@@ -548,4 +551,5 @@ MainGameState.prototype.shutdown = function()
     this.map.destroy();
     this.playerArm.destroy();
     this.bossBattleMusic.destroy();
+    this.bossHurtsfx.destroy();
 }
