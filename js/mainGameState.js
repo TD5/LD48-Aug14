@@ -3,7 +3,10 @@ function MainGameState(game)
     this.game = game;
     this.LASER_POOL_SIZE = 40;
     this.FIRE_DELAY = 100;
+    this.ENEMY_SPAWN_DELAY = 1000;
     this.SMALL_LASER_SPEED = 700;
+    this.ENEMY_ATTRACTION_ZONE = 900;
+    this.MAX_ENEMIES_SPAWNED = 20;
 }
 
 MainGameState.prototype.thispreload = function() 
@@ -49,7 +52,8 @@ MainGameState.prototype.create = function()
     this.boss.anchor.setTo(0.5, 0.5);
     this.game.physics.enable(this.boss, Phaser.Physics.ARCADE);
     this.boss.body.allowGravity = false;
-    this.boss.health = 1000;
+    this.boss.health = 100; // TODO Increase
+    this.boss.immovable = true;
     this.playerArm.anchor.setTo(0.8,0.28);
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
@@ -112,6 +116,8 @@ MainGameState.prototype.create = function()
     this.unlockTime = 0;
     this.setArm();
     this.isBossBattle = false;
+    this.lastSpawnAt = 0;
+    this.numEnemiesSpawned = 0;
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -135,36 +141,38 @@ MainGameState.prototype.createEnemies = function()
     var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
-//        enemy = this.game.add.sprite(
-//            this.game.world.x+Math.random()*this.game.world.height, 
-//            this.game.world.y+Math.random()*this.game.world.width, 
-//            'enemy');
-//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-//        enemy.body.allowGravity = false;
-//        enemy.anchor.setTo(0.5, 0.5);
-//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-//        enemy.animations.play('fluctuate');
-//        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
-//            this.game.physics.arcade.collide(enemy, this.layer))
-//        {
-//            enemy.kill();
-//        }
-//        this.enemies.add(enemy);
+        enemy = this.game.add.sprite(
+            this.game.world.x+Math.random()*this.game.world.height, 
+            this.game.world.y+Math.random()*this.game.world.width, 
+            'enemy');
+        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+        enemy.body.allowGravity = false;
+        enemy.anchor.setTo(0.5, 0.5);
+        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+        enemy.animations.play('fluctuate');
+        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+            this.game.physics.arcade.collide(enemy, this.layer))
+        {
+            enemy.kill();
+        }
+        enemy.spawnedByBoss = false;        
+        this.enemies.add(enemy);
     }
     
-        for (var i = 0; i < 30; i++) // More enemies for the boss to spawn
+        for (var i = 0; i < this.MAX_ENEMIES_SPAWNED; i++) // More enemies for the boss to spawn
     {
-//        enemy = this.game.add.sprite(
-//            this.boss.x, 
-//            this.boss.y, 
-//            'enemy');
-//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-//        enemy.body.allowGravity = false;
-//        enemy.anchor.setTo(0.5, 0.5);
-//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-//        enemy.animations.play('fluctuate');
-//        enemy.kill();
-//        this.enemies.add(enemy);
+        enemy = this.game.add.sprite(
+            this.boss.x, 
+            this.boss.y, 
+            'enemy');
+        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+        enemy.body.allowGravity = false;
+        enemy.anchor.setTo(0.5, 0.5);
+        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+        enemy.animations.play('fluctuate');
+        enemy.kill();
+        enemy.spawnedByBoss = true;
+        this.enemies.add(enemy);
     }
 }
 
@@ -235,11 +243,12 @@ MainGameState.prototype.update = function()
     this.enemies.forEachAlive(this.enemyHomeIn, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
+    this.smallLaserPool.forEachAlive(this.smallLaserCollideWithBoss, this);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
     this.vafs.forEachAlive(this.vafMovePlayer, this);
     
-    // TODO Small lasers collide with boss and damage() it by 1
-    // TODO Boss spawns enemies if player is nearby
+    this.bossSpawnEnemies();
+    
     // TODO Show health remaining (increase flash rate of boss?)
     
     if (!this.jumping && this.jumpButton.isDown && this.game.time.now > this.jumpEnd)
@@ -355,7 +364,7 @@ MainGameState.prototype.setArm = function()
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
-    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 600)
+    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < this.ENEMY_ATTRACTION_ZONE)
     {
         this.game.physics.arcade.accelerateToObject(enemy, this.player, 50, 130, 130)
     }
@@ -365,6 +374,39 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
         enemy.body.velocity.y = 0;
     }
     this.game.physics.arcade.collide(enemy, this.layer);
+}
+
+MainGameState.prototype.bossSpawnEnemies = function()
+{
+    if (this.game.time.now - this.lastSpawnAt < this.ENEMY_SPAWN_DELAY)
+    {
+        return;
+    }
+    if (this.game.physics.arcade.distanceBetween(this.boss, this.player) < this.ENEMY_ATTRACTION_ZONE &&
+       this.numEnemiesSpawned < this.MAX_ENEMIES_SPAWNED)
+    {
+        this.lastSpawnAt = this.game.time.now;
+        this.numEnemiesSpawned++;
+        var enemy = this.enemies.getFirstDead();
+        if (enemy === null || enemy === undefined) return;
+        enemy.revive();
+        enemy.checkWorldBounds = true;
+        enemy.outOfBoundsKill = true;
+        enemy.reset(
+            this.boss.x + Math.floor(Math.random() * 300)-150, 
+            this.boss.y + Math.floor(Math.random() * 300)-150);
+    }
+}
+
+MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
+{
+    if (this.game.physics.arcade.collide(smallLaser, this.boss))
+    {
+        smallLaser.kill();
+        this.boss.damage(1);
+        this.explosionAt(smallLaser.x, smallLaser.y);
+    }
+    
 }
 
 MainGameState.prototype.vafMovePlayer = function(vaf)
@@ -409,6 +451,7 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
         this.explosionAt(enemy.x, enemy.y);
+        if (enemy.spawnedByBoss = true) this.numEnemiesSpawned--;
         enemy.kill();
         smallLaser.kill();
     }

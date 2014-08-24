@@ -3,7 +3,7 @@ function MainMenuState(game)
     this.WAIT_PERIOD = 100;//6000;
     this.game = game;
     this.titleString = "Adamantium\n   [ Cyborg ]";
-    this.introString = "The Final War was a cataclysmic event that wiped out entire star systems.          \nThe weapons used to create such utter destruction took their toll on the fabric of spacetime.          \nA huge network of interconnected wormholes began to open up, linking distant places and times.          \nThe entities that dared design and use these weapons are still at large.          \nWe do not know what their next move will be, but we know our options are limited.          \n          \nYou are the only one left that can stop them.          \n          \nPlease help us.          \n          \n          \n<Click to begin>";
+    this.introString = "The Final War was a cataclysmic event that wiped out entire star systems.          \nThe weapons used to create such utter destruction took their toll on the fabric of spacetime.          \nA huge network of interconnected wormholes began to open up, linking us to distant places and times.          \nEntities even more deadly than our Final War foes stepped through the newborn wormholes and took root\nin our homeworlds.          \nThese primordial flesh sacks are nigh on invincible: nothing in our arsenal can match them.          \n          \nYou are the only one left that has a chance to end this and bring hope to humanity.          \n          \nPlease help us.          \n          \n          \n<Click to begin>";
     
 }
 
