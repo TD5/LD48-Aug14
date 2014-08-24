@@ -222,13 +222,27 @@ MainGameState.prototype.setArm = function()
     if (this.facing === 'right')
     {
         this.playerArm.x = this.player.x - 8;
+        this.playerArm.y = this.player.y - this.player.body.halfHeight + 36;
     }
     else
     {
         this.playerArm.x = this.player.x + 8;
+        this.playerArm.y = this.player.y - this.player.body.halfHeight + 36;
     }
-    this.playerArm.y = this.player.y - this.player.body.halfHeight + 36;
-    this.playerArm.rotation = this.game.physics.arcade.angleBetween(this.playerArm, {x: this.game.input.worldX, y: this.game.input.worldY});
+    if (this.facing === 'right')
+    {
+        this.playerArm.rotation = 
+            this.game.physics.arcade.angleBetween(
+                this.playerArm, 
+                {x: this.game.input.worldX, y: this.game.input.worldY});
+    }
+    else
+    {
+        this.playerArm.rotation = 
+            this.game.physics.arcade.angleBetween(
+            this.playerArm, 
+            {x: this.game.input.worldX, y: this.game.input.worldY}) + Math.PI;
+    }
 }
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
@@ -295,17 +309,35 @@ MainGameState.prototype.fire = function()
     smallLaserBeam.checkWorldBounds = true;
     smallLaserBeam.outOfBoundsKill = true;
     var rotation = this.playerArm.rotation;
-    smallLaserBeam.reset(
+    if (this.facing === 'left')
+    {
+        rotation += Math.PI;
+        smallLaserBeam.reset(
+        this.playerArm.x + 38*Math.cos(rotation) + 16*Math.sin(rotation), 
+        this.playerArm.y + 38*Math.sin(rotation) - 16*Math.cos(rotation));
+        var recoil = Math.floor(this.gaussian() * 80) + 1;
+        smallLaserBeam.body.velocity.x = 
+            this.SMALL_LASER_SPEED*Math.cos(rotation) + 
+            recoil*Math.cos(rotation+Math.PI/2);
+        smallLaserBeam.body.velocity.y = 
+            this.player.body.velocity.y + 
+            this.SMALL_LASER_SPEED*Math.sin(rotation) + 
+            recoil*Math.sin(rotation+Math.PI/2);
+    }
+    else
+    {
+        smallLaserBeam.reset(
         this.playerArm.x + 38*Math.cos(rotation) - 16*Math.sin(rotation), 
         this.playerArm.y + 38*Math.sin(rotation) + 16*Math.cos(rotation));
-    var recoil = Math.floor(this.gaussian() * 80) + 1;
-    smallLaserBeam.body.velocity.x = 
-        this.SMALL_LASER_SPEED*Math.cos(rotation) + 
-        recoil*Math.cos(rotation+Math.PI/2);
-    smallLaserBeam.body.velocity.y = 
-        this.player.body.velocity.y + 
-        this.SMALL_LASER_SPEED*Math.sin(rotation) + 
-        recoil*Math.sin(rotation+Math.PI/2);
+        var recoil = Math.floor(this.gaussian() * 80) + 1;
+        smallLaserBeam.body.velocity.x = 
+            this.SMALL_LASER_SPEED*Math.cos(rotation) + 
+            recoil*Math.cos(rotation+Math.PI/2);
+        smallLaserBeam.body.velocity.y = 
+            this.player.body.velocity.y + 
+            this.SMALL_LASER_SPEED*Math.sin(rotation) + 
+            recoil*Math.sin(rotation+Math.PI/2);
+    }
     this.smallLasersfx.play('',0,1,false);
 };
 
