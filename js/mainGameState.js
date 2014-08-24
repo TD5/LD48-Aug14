@@ -523,7 +523,7 @@ MainGameState.prototype.bossFire = function()
         bossBullet.checkWorldBounds = true;
         bossBullet.outOfBoundsKill = true;
         bossBullet.reset(this.boss.x, this.boss.y);
-        var angle = Math.floor(Math.random() * 2 * Math.PI);
+        var angle = Math.random() * 2 * Math.PI;
         bossBullet.body.velocity.x = 
             this.BOSS_BULLET_SPEED*Math.cos(angle);
         bossBullet.body.velocity.y = 
