@@ -285,6 +285,7 @@ MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser)
     if (this.game.physics.arcade.collide(smallLaser, this.layer))
     {
         smallLaser.kill();
+        this.explosionAt(smallLaser.x, smallLaser.y);
     }
 }
 
@@ -297,19 +298,22 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
 {
     if (this.game.physics.arcade.collide(smallLaser, enemy))
     {
-        var explosion = this.explosionsPool.getFirstDead();
-        if (explosion === null || explosion === undefined) return;
-        explosion.revive();
-        explosion.checkWorldBounds = true;
-        explosion.outOfBoundsKill = true;
-        explosion.reset(
-            enemy.x, 
-            enemy.y);
+        this.explosionAt(enemy.x, enemy.y);
         enemy.kill();
         smallLaser.kill();
-        explosion.animations.play('explode', 50, false, true);
-        //this.explosionsfx.play('',0,1,false);
     }
+}
+
+MainGameState.prototype.explosionAt = function(x, y)
+{
+    var explosion = this.explosionsPool.getFirstDead();
+    if (explosion === null || explosion === undefined) return;
+    explosion.revive();
+    explosion.checkWorldBounds = true;
+    explosion.outOfBoundsKill = true;
+    explosion.reset(x, y);
+    explosion.animations.play('explode', 50, false, true);
+    //this.explosionsfx.play('',0,1,false);
 }
 
 MainGameState.prototype.fire = function() 
