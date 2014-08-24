@@ -100,8 +100,6 @@ MainGameState.prototype.create = function()
     
     this.unlockTime = 0;
     this.setArm();
-    
-    this.game.time.advancedTiming = true;
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -412,7 +410,6 @@ MainGameState.prototype.render = function()
 //    {
 //        this.clipText.text = "Clip: EMPTY";
 //    }
-    this.game.debug.text(game.time.fps, 2, 100, "#00ff00");
 };
 
 MainGameState.prototype.shutdown = function() 
