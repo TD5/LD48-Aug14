@@ -13,16 +13,16 @@ MainGameState.prototype.thispreload = function()
 {
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
-    this.game.load.game.load.spritesheet ('player', 'assets/graphics/player.png', 60, 100);
-    this.game.load.game.load.spritesheet ('explosion', 'assets/graphics/explosion.png', 30, 30);
+    this.game.load.spritesheet('player', 'assets/graphics/player.png', 60, 100);
+    this.game.load.spritesheet('explosion', 'assets/graphics/explosion.png', 30, 30);
     this.game.load.image('playerArm', 'assets/graphics/arm.png');
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('bossBattle', ['assets/music/bossBattle.mp3', 'assets/music/bossBattle.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
-    this.game.load.image('boss', 'assets/graphics/boss.png');
-    this.game.load.game.load.spritesheet ('enemy', 'assets/graphics/enemy.png', 40, 40);
-    this.game.load.game.load.spritesheet ('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
+    this.game.load.spritesheet('boss', 'assets/graphics/boss.png', 320, 320);
+    this.game.load.spritesheet('enemy', 'assets/graphics/enemy.png', 40, 40);
+    this.game.load.spritesheet('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -55,6 +55,7 @@ MainGameState.prototype.create = function()
     this.boss.health = 100; // TODO Increase
     //this.boss.immovable = true;
     this.boss.body.moves = false;
+    this.boss.frame = 0;
     this.playerArm.anchor.setTo(0.8,0.28);
     this.game.camera.follow(this.player);
     this.game.camera.deadzone = new Phaser.Rectangle(300, 250, 250, 50);
@@ -405,6 +406,7 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
     {
         smallLaser.kill();
         this.boss.damage(1);
+        this.boss.frame = (this.boss.frame + 1) % 2;
         this.explosionAt(smallLaser.x, smallLaser.y);
         if (!this.boss.alive)
         {
