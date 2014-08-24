@@ -149,7 +149,7 @@ MainGameState.prototype.createVaf = function()
     {
         vaf = this.game.add.sprite(
             this.game.world.x+1794, 
-            this.game.world.y+1961 - i*120, 
+            this.game.world.y+1961 - i*160, 
             'vaf');
         vaf.inputEnabled = true;
         vaf.input.enableDrag();
@@ -296,17 +296,10 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
 
 MainGameState.prototype.vafMovePlayer = function(vaf)
 {
-    if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 30)
-    {
-        console.log("In range");
-        console.log("Some vel: "+(Math.abs(this.player.body.velocity.y) > 5));
-        console.log("Not max: "+(this.player.body.velocity.y > -400));
-        console.log("Falling: "+(this.player.body.velocity.y > 10));
-    }
     if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 30 &&
        Math.abs(this.player.body.velocity.y) > 5 &&
             ((this.player.body.velocity.y > -400) || 
-            (this.player.body.velocity.y > 10)))
+            (this.player.body.velocity.y > 5)))
     {
         this.player.body.velocity.y -= 20;
     }
