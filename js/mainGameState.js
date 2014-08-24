@@ -2,9 +2,12 @@ function MainGameState(game)
 {
     this.game = game;
     this.LASER_POOL_SIZE = 40;
+    this.BOSS_BULLET_POOL_SIZE = 40;
     this.FIRE_DELAY = 100;
+    this.BOSS_FIRE_DELAY = 100;
     this.ENEMY_SPAWN_DELAY = 600;
     this.SMALL_LASER_SPEED = 700;
+    this.BOSS_BULLET_SPEED = 450;
     this.ENEMY_ATTRACTION_ZONE = 900;
     this.MAX_ENEMIES_SPAWNED = 20;
 }
@@ -13,17 +16,18 @@ MainGameState.prototype.thispreload = function()
 {
     this.game.load.tilemap('lvl1', 'assets/maps/lvl1.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('lvl1tiles', 'assets/maps/lvl1tiles.png');
-    this.game.load.spritesheet('player', 'assets/graphics/player.png', 60, 100);
-    this.game.load.spritesheet('explosion', 'assets/graphics/explosion.png', 30, 30);
     this.game.load.image('playerArm', 'assets/graphics/arm.png');
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
     this.game.load.audio('bossBattle', ['assets/music/bossBattle.mp3', 'assets/music/bossBattle.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.audio('bossHurt', ['assets/sounds/bossHurt.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
+    this.game.load.spritesheet('player', 'assets/graphics/player.png', 60, 100);
+    this.game.load.spritesheet('explosion', 'assets/graphics/explosion.png', 30, 30);
     this.game.load.spritesheet('boss', 'assets/graphics/boss.png', 320, 320);
     this.game.load.spritesheet('enemy', 'assets/graphics/enemy.png', 40, 40);
     this.game.load.spritesheet('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
+    this.game.load.spritesheet('bossBullet', 'assets/graphics/bossBullet.png', 40, 40);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -99,6 +103,18 @@ MainGameState.prototype.create = function()
         explosion.kill();
     }
     
+    this.bossBulletPool = this.game.add.group();
+    for(var i = 0; i < this.BOSS_BULLET_POOL_SIZE; i++) {
+        var bossBullet = this.game.add.sprite(0, 0, 'bossBullet');
+        this.bossBulletPool.add(bossBullet);
+        bossBullet.anchor.setTo(0.5, 0.5);
+        this.game.physics.enable(bossBullet, Phaser.Physics.ARCADE);
+        bossBullet.body.allowGravity = false;
+        bossBullet.animations.add('spin', [0, 1], 40, true);
+        bossBullet.bringToTop();
+        bossBullet.kill();
+    }
+    
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
     this.clipText.fixedToCamera = true;
     
@@ -111,6 +127,7 @@ MainGameState.prototype.create = function()
     this.jumping = false;
     this.jumpEnd = 0;
     this.lastSmallLaserFiredAt = 0;
+    this.lastBossBulletFiredAt = 0;
     this.player.animations.stop();
     this.player.frame = 0;
     
@@ -252,6 +269,7 @@ MainGameState.prototype.update = function()
     this.vafs.forEachAlive(this.vafMovePlayer, this);
     
     this.bossSpawnEnemies();
+    this.bossFire();
     
     // TODO Show health remaining (increase flash rate of boss?)
     
@@ -334,8 +352,6 @@ MainGameState.prototype.update = function()
         this.bossBattleMusic.play('',0,1,true);
         this.isBossBattle = true;
     }
-//    this.boss.x = 4900;
-//    this.boss.y = 500;
 };
 
 MainGameState.prototype.setArm = function()
@@ -382,10 +398,7 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
 
 MainGameState.prototype.bossSpawnEnemies = function()
 {
-    if (this.game.time.now - this.lastSpawnAt < this.ENEMY_SPAWN_DELAY)
-    {
-        return;
-    }
+    if (this.game.time.now - this.lastSpawnAt < this.ENEMY_SPAWN_DELAY) return;
     if (this.game.physics.arcade.distanceBetween(this.boss, this.player) < this.ENEMY_ATTRACTION_ZONE &&
        this.numEnemiesSpawned < this.MAX_ENEMIES_SPAWNED)
     {
@@ -479,12 +492,29 @@ MainGameState.prototype.explosionAt = function(x, y)
     //this.explosionsfx.play('',0,1,false);
 }
 
+MainGameState.prototype.bossFire = function() 
+{
+    if (this.isBossBattle)
+    {
+        if (this.game.time.now - this.lastBossBulletFiredAt < this.FIRE_DELAY) return;
+        this.lastBossBulletFiredAt = this.game.time.now;
+        var bossBullet = this.bossBulletPool.getFirstDead();
+        if (bossBullet === null || bossBullet === undefined) return;
+        bossBullet.revive();
+        bossBullet.checkWorldBounds = true;
+        bossBullet.outOfBoundsKill = true;
+        bossBullet.reset(this.boss.x, this.boss.y);
+        var angle = Math.floor(Math.random() * 2 * Math.PI);
+        bossBullet.body.velocity.x = 
+            this.BOSS_BULLET_SPEED*Math.cos(rotation);
+        bossBullet.body.velocity.y = 
+            this.BOSS_BULLET_SPEED*Math.sin(rotation);
+    }
+};
+
 MainGameState.prototype.fire = function() 
 {
-    if (this.game.time.now - this.lastSmallLaserFiredAt < this.FIRE_DELAY)
-    {
-        return;
-    }
+    if (this.game.time.now - this.lastSmallLaserFiredAt < this.FIRE_DELAY) return;
     this.lastSmallLaserFiredAt = this.game.time.now;
     var smallLaserBeam = this.smallLaserPool.getFirstDead();
     if (smallLaserBeam === null || smallLaserBeam === undefined) return;
