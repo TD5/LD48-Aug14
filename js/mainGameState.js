@@ -31,7 +31,7 @@ MainGameState.prototype.create = function()
     this.layer = this.map.createLayer('layer1');
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
-    this.player = this.game.add.sprite(this.game.world.x+120, this.game.world.y+150, 'player');
+    this.player = this.game.add.sprite(this.game.world.x+240, this.game.world.y+this.game.world.height - 150, 'player');
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.bounce.y = 0.0;
     this.player.body.collideWorldBounds = true;
@@ -257,9 +257,9 @@ MainGameState.prototype.setArm = function()
 
 MainGameState.prototype.enemyHomeIn = function(enemy)
 {
-    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 900)
+    if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 600)
     {
-        this.game.physics.arcade.accelerateToObject(enemy, this.player, 70, 150, 150)
+        this.game.physics.arcade.accelerateToObject(enemy, this.player, 50, 130, 130)
     }
     else
     {
