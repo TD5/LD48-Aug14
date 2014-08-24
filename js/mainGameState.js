@@ -123,21 +123,21 @@ MainGameState.prototype.createEnemies = function()
     var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
-        enemy = this.game.add.sprite(
-            this.game.world.x+Math.random()*this.game.world.height, 
-            this.game.world.y+Math.random()*this.game.world.width, 
-            'enemy');
-        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.allowGravity = false;
-        enemy.anchor.setTo(0.5, 0.5);
-        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-        enemy.animations.play('fluctuate');
-        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
-            this.game.physics.arcade.collide(enemy, this.layer))
-        {
-            enemy.kill();
-        }
-        this.enemies.add(enemy);
+//        enemy = this.game.add.sprite(
+//            this.game.world.x+Math.random()*this.game.world.height, 
+//            this.game.world.y+Math.random()*this.game.world.width, 
+//            'enemy');
+//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+//        enemy.body.allowGravity = false;
+//        enemy.anchor.setTo(0.5, 0.5);
+//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+//        enemy.animations.play('fluctuate');
+//        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+//            this.game.physics.arcade.collide(enemy, this.layer))
+//        {
+//            enemy.kill();
+//        }
+//        this.enemies.add(enemy);
     }
 }
 
@@ -145,12 +145,15 @@ MainGameState.prototype.createVaf = function()
 {
     this.vafs = this.game.add.group();
     var vaf = undefined;
-    for (var i = 0; i < 100; i++) 
+    for (var i = 0; i < 4; i++) 
     {
         vaf = this.game.add.sprite(
-            this.game.world.x+Math.random()*this.game.world.height, 
-            this.game.world.y+Math.random()*this.game.world.width, 
+            this.game.world.x+1794, 
+            this.game.world.y+1961 - i*120, 
             'vaf');
+        vaf.inputEnabled = true;
+        vaf.input.enableDrag();
+        
         this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
         vaf.body.allowGravity = false;
         vaf.anchor.setTo(0.5, 0.5);
@@ -295,7 +298,17 @@ MainGameState.prototype.vafMovePlayer = function(vaf)
 {
     if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 30)
     {
-        this.player.body.velocity.y -= 50;
+        console.log("In range");
+        console.log("Some vel: "+(Math.abs(this.player.body.velocity.y) > 5));
+        console.log("Not max: "+(this.player.body.velocity.y > -400));
+        console.log("Falling: "+(this.player.body.velocity.y > 10));
+    }
+    if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 30 &&
+       Math.abs(this.player.body.velocity.y) > 5 &&
+            ((this.player.body.velocity.y > -400) || 
+            (this.player.body.velocity.y > 10)))
+    {
+        this.player.body.velocity.y -= 20;
     }
 }
 
@@ -407,7 +420,13 @@ MainGameState.prototype.render = function()
     {
         this.clipText.text = "Clip: EMPTY";
     }
+    //this.vafs.forEachAlive(this.printLocation, this);
 };
+
+//MainGameState.prototype.printLocation = function(obj)
+//{
+//    //console.log("("+obj.x+", "+obj.y+")");
+//};
 
 MainGameState.prototype.shutdown = function() 
 {
