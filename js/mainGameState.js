@@ -151,6 +151,21 @@ MainGameState.prototype.createEnemies = function()
 //        }
 //        this.enemies.add(enemy);
     }
+    
+        for (var i = 0; i < 30; i++) // More enemies for the boss to spawn
+    {
+//        enemy = this.game.add.sprite(
+//            this.boss.x, 
+//            this.boss.y, 
+//            'enemy');
+//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+//        enemy.body.allowGravity = false;
+//        enemy.anchor.setTo(0.5, 0.5);
+//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+//        enemy.animations.play('fluctuate');
+//        enemy.kill();
+//        this.enemies.add(enemy);
+    }
 }
 
 MainGameState.prototype.createVaf = function()
@@ -306,6 +321,8 @@ MainGameState.prototype.update = function()
         this.bossBattleMusic.play('',0,1,true);
         this.isBossBattle = true;
     }
+    this.boss.body.velocity.x = 0;
+    this.boss.body.velocity.y = 0;
 };
 
 MainGameState.prototype.setArm = function()
