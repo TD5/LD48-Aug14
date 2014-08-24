@@ -14,6 +14,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.game.load.spritesheet ('explosion', 'assets/graphics/explosion.png', 30, 30);
     this.game.load.image('playerArm', 'assets/graphics/arm.png');
     this.game.load.audio('overworld', ['assets/music/overworld.mp3', 'assets/music/overworld.ogg']);
+    this.game.load.audio('bossBattle', ['assets/music/bossBattle.mp3', 'assets/music/bossBattle.ogg']);
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
     this.game.load.game.load.spritesheet ('enemy', 'assets/graphics/enemy.png', 40, 40);
@@ -55,6 +56,7 @@ MainGameState.prototype.create = function()
     this.muteButton = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
     this.music = this.game.add.audio('overworld');
     this.music.play('',0,1,true);
+    this.bossBattleMusic = this.game.add.audio('bossBattle');
     this.jumpsfx = this.game.add.audio('jumpjet');
     this.smallLasersfx = this.game.add.audio('smallLaserBeamSfx');
 
@@ -103,6 +105,7 @@ MainGameState.prototype.create = function()
     
     this.unlockTime = 0;
     this.setArm();
+    this.isBossBattle = false;
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -126,21 +129,21 @@ MainGameState.prototype.createEnemies = function()
     var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
-        enemy = this.game.add.sprite(
-            this.game.world.x+Math.random()*this.game.world.height, 
-            this.game.world.y+Math.random()*this.game.world.width, 
-            'enemy');
-        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.allowGravity = false;
-        enemy.anchor.setTo(0.5, 0.5);
-        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-        enemy.animations.play('fluctuate');
-        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
-            this.game.physics.arcade.collide(enemy, this.layer))
-        {
-            enemy.kill();
-        }
-        this.enemies.add(enemy);
+//        enemy = this.game.add.sprite(
+//            this.game.world.x+Math.random()*this.game.world.height, 
+//            this.game.world.y+Math.random()*this.game.world.width, 
+//            'enemy');
+//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+//        enemy.body.allowGravity = false;
+//        enemy.anchor.setTo(0.5, 0.5);
+//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+//        enemy.animations.play('fluctuate');
+//        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+//            this.game.physics.arcade.collide(enemy, this.layer))
+//        {
+//            enemy.kill();
+//        }
+//        this.enemies.add(enemy);
     }
 }
 
@@ -271,6 +274,12 @@ MainGameState.prototype.update = function()
     if (this.muteButton.isDown)
     {
         this.music.mute = true;
+    }
+    if (!this.isBossBattle && this.player.x > 4600 && this.player.y < 1422)
+    {
+        this.music.stop();
+        this.bossBattleMusic.play('',0,1,true);
+        this.isBossBattle = true;
     }
 };
 
@@ -457,4 +466,5 @@ MainGameState.prototype.shutdown = function()
     this.smallLasersfx.destroy();
     this.map.destroy();
     this.playerArm.destroy();
+    this.bossBattleMusic.destroy();
 }
