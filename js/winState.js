@@ -8,13 +8,13 @@ function WinState(game)
 
 WinState.prototype.thispreload = function() 
 {
-    //this.game.load.audio('title', ['assets/music/titleTheme.mp3', 'assets/music/titleTheme.ogg']);
+    this.game.load.audio('win', ['assets/music/win.mp3', 'assets/music/win.ogg']);
 };
 
 WinState.prototype.create = function() 
 {
-    //this.music = this.game.add.audio('title');
-    //this.music.play('',0,1,true);
+    this.music = this.game.add.audio('win');
+    this.music.play('',0,1,true);
     this.game.stage.backgroundColor = '#a7474a';
     this.titleText = this.game.add.text(425, 275, this.titleString, { font: 'bold 50px Arial', fill: '#f4fff5' });
     this.titleText.anchor.setTo(0.5, 0.5);
@@ -33,4 +33,9 @@ WinState.prototype.update = function()
 WinState.prototype.render = function() 
 {
 
+};
+
+MainMenuState.prototype.shutdown = function() 
+{
+    this.music.destroy();
 };
