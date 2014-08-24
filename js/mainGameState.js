@@ -129,21 +129,21 @@ MainGameState.prototype.createEnemies = function()
     var enemy = undefined;
     for (var i = 0; i < 100; i++) 
     {
-//        enemy = this.game.add.sprite(
-//            this.game.world.x+Math.random()*this.game.world.height, 
-//            this.game.world.y+Math.random()*this.game.world.width, 
-//            'enemy');
-//        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
-//        enemy.body.allowGravity = false;
-//        enemy.anchor.setTo(0.5, 0.5);
-//        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-//        enemy.animations.play('fluctuate');
-//        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
-//            this.game.physics.arcade.collide(enemy, this.layer))
-//        {
-//            enemy.kill();
-//        }
-//        this.enemies.add(enemy);
+        enemy = this.game.add.sprite(
+            this.game.world.x+Math.random()*this.game.world.height, 
+            this.game.world.y+Math.random()*this.game.world.width, 
+            'enemy');
+        this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
+        enemy.body.allowGravity = false;
+        enemy.anchor.setTo(0.5, 0.5);
+        enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+        enemy.animations.play('fluctuate');
+        if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
+            this.game.physics.arcade.collide(enemy, this.layer))
+        {
+            enemy.kill();
+        }
+        this.enemies.add(enemy);
     }
 }
 
@@ -436,18 +436,7 @@ MainGameState.prototype.gaussian = function()
 
 MainGameState.prototype.render = function() 
 {
-//    if (this.smallLaserPool.countDead() !== 0)
-//    {
-//        this.clipText.text = "Clip: ";
-//        for (var i = 0; i < this.smallLaserPool.countDead(); i++)
-//        {
-//            this.clipText.text += "|";
-//        }
-//    }
-//    else
-//    {
-//        this.clipText.text = "Clip: EMPTY";
-//    }
+
 };
 
 MainGameState.prototype.shutdown = function() 
