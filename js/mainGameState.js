@@ -17,6 +17,7 @@ MainGameState.prototype.thispreload = function()
     this.game.load.audio('jumpjet', ['assets/sounds/jet.wav']);
     this.game.load.image('smallLaserBeam', 'assets/graphics/small_laser.png');
     this.game.load.game.load.spritesheet ('enemy', 'assets/graphics/enemy.png', 40, 40);
+    this.game.load.game.load.spritesheet ('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
 };
 
@@ -82,6 +83,7 @@ MainGameState.prototype.create = function()
     this.clipText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#ffffff' });
     this.clipText.fixedToCamera = true;
     
+    this.createVaf();
     this.createEnemies();
     
     this.player.scale.x = -Math.abs(this.player.scale.x);
@@ -138,6 +140,25 @@ MainGameState.prototype.createEnemies = function()
         this.enemies.add(enemy);
     }
 }
+
+MainGameState.prototype.createVaf = function()
+{
+    this.vafs = this.game.add.group();
+    var vaf = undefined;
+    for (var i = 0; i < 100; i++) 
+    {
+        vaf = this.game.add.sprite(
+            this.game.world.x+Math.random()*this.game.world.height, 
+            this.game.world.y+Math.random()*this.game.world.width, 
+            'vaf');
+        this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
+        vaf.body.allowGravity = false;
+        vaf.anchor.setTo(0.5, 0.5);
+        vaf.animations.add('fluctuate', [0, 1, 2], 8, true);
+        vaf.animations.play('fluctuate');
+        this.vafs.add(vaf);
+    }
+}
     
 
 MainGameState.prototype.update = function() 
@@ -159,6 +180,7 @@ MainGameState.prototype.update = function()
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithLayer, this);
     this.smallLaserPool.forEachAlive(this.smallLaserCollideWithEnemies, this, this.enemies);
     this.enemies.forEachAlive(this.enemyCollideWithPlayer, this);
+    this.vafs.forEachAlive(this.vafMovePlayer, this);
     
     if (!this.jumping && this.jumpButton.isDown && this.game.time.now > this.jumpEnd)
     {
@@ -267,6 +289,14 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
         enemy.body.velocity.y = 0;
     }
     this.game.physics.arcade.collide(enemy, this.layer);
+}
+
+MainGameState.prototype.vafMovePlayer = function(vaf)
+{
+    if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 30)
+    {
+        this.player.body.velocity.y -= 50;
+    }
 }
 
 MainGameState.prototype.enemyCollideWithPlayer = function(enemy)
