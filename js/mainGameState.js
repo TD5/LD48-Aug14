@@ -157,7 +157,7 @@ MainGameState.prototype.createVaf = function()
         this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
         vaf.body.allowGravity = false;
         vaf.anchor.setTo(0.5, 0.5);
-        vaf.animations.add('fluctuate', [0, 1, 2], 8, true);
+        vaf.animations.add('fluctuate', [0, 1, 2, 3, 4], 8, true);
         vaf.animations.play('fluctuate');
         this.vafs.add(vaf);
     }
