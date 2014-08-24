@@ -152,7 +152,7 @@ MainGameState.prototype.createVaf = function()
     {
         vaf = this.game.add.sprite(
             this.game.world.x+1794, 
-            this.game.world.y+1961 - i*160, 
+            this.game.world.y+1961 - i*170, 
             'vaf');        
         this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
         vaf.body.allowGravity = false;
@@ -166,7 +166,7 @@ MainGameState.prototype.createVaf = function()
     {
         vaf = this.game.add.sprite(
             this.game.world.x+2622, 
-            this.game.world.y+2446 - i*160, 
+            this.game.world.y+2446 - i*170, 
             'vaf');        
         this.game.physics.enable(vaf, Phaser.Physics.ARCADE);
         vaf.body.allowGravity = false;
@@ -318,12 +318,16 @@ MainGameState.prototype.enemyHomeIn = function(enemy)
 
 MainGameState.prototype.vafMovePlayer = function(vaf)
 {
-    if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 40 &&
-       Math.abs(this.player.body.velocity.y) > 10 &&
-            ((this.player.body.velocity.y > -400) || 
-            (this.player.body.velocity.y > 20)))
+    if (this.game.physics.arcade.distanceBetween(vaf, this.player) < 40)
     {
-        this.player.body.velocity.y -= 16;
+        if (this.jumping)
+        {
+            this.player.body.velocity.y -= 17;
+        }
+        else if (this.player.body.velocity.y > 50)
+        {
+            this.player.body.velocity.y -= 8;
+        }
     }
 }
 
