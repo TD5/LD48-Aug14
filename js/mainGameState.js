@@ -67,7 +67,6 @@ MainGameState.prototype.create = function()
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
     this.leftButton = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
     this.rightButton = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
-    this.lockButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
     this.spaceButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.debugButton = this.game.input.keyboard.addKey(Phaser.Keyboard.L);
     this.muteButton = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
@@ -134,7 +133,6 @@ MainGameState.prototype.create = function()
     this.player.bringToTop();
     this.playerArm.bringToTop();
     
-    this.unlockTime = 0;
     this.setArm();
     this.isBossBattle = false;
     this.lastSpawnAt = 0;
@@ -246,17 +244,7 @@ MainGameState.prototype.createVaf = function()
     
 
 MainGameState.prototype.update = function() 
-{
-    if (!this.game.input.mouse.locked && this.lockButton.justPressed(100))
-    {
-        this.game.input.mouse.requestPointerLock();
-        this.unlockTime = this.game.time.now + 800;
-    }
-    if (this.pointerLocked && this.unlockTime < this.game.time.now && this.lockButton.justPressed(100))
-    {
-        this.game.input.mouse.releasePointerLock();
-    }
-    
+{   
     this.game.physics.arcade.collide(this.player, this.layer);
     this.game.physics.arcade.collide(this.player, this.boss);
     this.player.body.velocity.x = 0;
@@ -586,10 +574,6 @@ MainGameState.prototype.render = function()
 
 MainGameState.prototype.shutdown = function() 
 {
-    if (this.game.input.mouse.locked)
-    {
-        this.game.input.mouse.releaselockerLock();
-    }
     this.enemies.destroy();
     this.player.destroy();
     this.music.destroy();
