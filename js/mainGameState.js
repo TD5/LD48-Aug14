@@ -43,7 +43,7 @@ MainGameState.prototype.create = function()
     this.layer = this.map.createLayer('layer1');
     this.layer.resizeWorld();
     this.game.physics.arcade.gravity.y = 250;
-    this.player = this.game.add.sprite(this.game.world.x+4229, this.game.world.y+this.game.world.height - 150, 'player');
+    this.player = this.game.add.sprite(this.game.world.x+240, this.game.world.y+this.game.world.height - 150, 'player');
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.bounce.y = 0.0;
     this.player.body.collideWorldBounds = true;
