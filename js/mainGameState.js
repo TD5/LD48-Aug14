@@ -31,6 +31,8 @@ MainGameState.prototype.thispreload = function()
     this.game.load.spritesheet('vaf', 'assets/graphics/verticalAccelerationField.png', 80, 30);
     this.game.load.spritesheet('bossBullet', 'assets/graphics/bossBullet.png', 20, 20);
     this.game.load.audio('smallLaserBeamSfx', 'assets/sounds/smallLaser.wav');
+    this.game.load.audio('killEnemySfx', 'assets/sounds/killEnemy.wav');
+    this.game.load.audio('explosionSfx', 'assets/sounds/explosion.wav');
 };
 
 MainGameState.prototype.create = function() 
@@ -78,6 +80,8 @@ MainGameState.prototype.create = function()
     this.jumpsfx = this.game.add.audio('jumpjet');
     this.bossHurtsfx = this.game.add.audio('bossHurt');
     this.smallLasersfx = this.game.add.audio('smallLaserBeamSfx');
+    this.killenemysfx = this.game.add.audio('killEnemySfx'); 
+    this.explosionsfx = this.game.add.audio('explosionSfx');
 
     this.player.bringToTop();
     this.playerArm.bringToTop();
@@ -463,6 +467,10 @@ MainGameState.prototype.smallLaserCollideWithLayer = function(smallLaser)
     {
         smallLaser.kill();
         this.explosionAt(smallLaser.x, smallLaser.y);
+        if (this.game.physics.arcade.distanceBetween(smallLaser, this.player) < 450)
+        {
+            this.explosionsfx.play('',0,1,false);
+        }
     }
 };
 
@@ -488,6 +496,7 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
         if (enemy.spawnedByBoss = true) this.numEnemiesSpawned--;
         enemy.kill();
         smallLaser.kill();
+        this.killenemysfx.play('',0,1,false);
     }
 };
 
