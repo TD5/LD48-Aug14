@@ -421,7 +421,7 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
         {
             this.game.state.start('winState');
         }
-        this.juicy.overScale(this.boss, 1.2);
+        this.juicy.overScale(this.boss, 1.1);
     }
     
 };
