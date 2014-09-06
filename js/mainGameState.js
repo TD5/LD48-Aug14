@@ -139,6 +139,7 @@ MainGameState.prototype.create = function()
     this.isBossBattle = false;
     this.lastSpawnAt = 0;
     this.numEnemiesSpawned = 0;
+    this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
 };
 
 MainGameState.prototype.setFacing = function(facing)
@@ -420,6 +421,7 @@ MainGameState.prototype.smallLaserCollideWithBoss = function(smallLaser)
         {
             this.game.state.start('winState');
         }
+        this.juicy.overScale(this.boss, 1.2);
     }
     
 };
