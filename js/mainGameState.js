@@ -175,6 +175,7 @@ MainGameState.prototype.createEnemies = function()
         enemy.body.allowGravity = false;
         enemy.anchor.setTo(0.5, 0.5);
         enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
+        enemy.animations.add('die', [3, 4], 40, true);
         enemy.animations.play('fluctuate');
         if (this.game.physics.arcade.distanceBetween(enemy, this.player) < 500 || 
             this.game.physics.arcade.collide(enemy, this.layer))
@@ -494,9 +495,12 @@ MainGameState.prototype.smallLaserCollideWithEnemy = function(enemy, smallLaser)
     {
         this.explosionAt(enemy.x, enemy.y);
         if (enemy.spawnedByBoss = true) this.numEnemiesSpawned--;
-        enemy.kill();
+        enemy.animations.play('die', 40, false, true);
         smallLaser.kill();
-        this.killenemysfx.play('',0,1,false);
+        if (this.game.physics.arcade.distanceBetween(smallLaser, this.player) < 900)
+        {
+            this.killenemysfx.play('',0,1,false);
+        }
     }
 };
 
