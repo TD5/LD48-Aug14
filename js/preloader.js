@@ -6,6 +6,9 @@ function Preloader(game)
 }
 
 Preloader.prototype.preload = function() {
+    this.preloadBar = this.add.sprite(50, 100, 'loadingBar');
+    this.preloadBar.anchor.setTo(0, 0);
+    this.load.setPreloadSprite(this.preloadBar,0);
     var winState = new WinState(game);
     var mainMenuState = new MainMenuState(game);
     var mainGameState = new MainGameState(game);
