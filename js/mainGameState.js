@@ -161,8 +161,8 @@ MainGameState.prototype.createEnemies = function()
     for (var i = 0; i < 100; i++) 
     {
         enemy = this.game.add.sprite(
-            this.game.world.x+Math.random()*this.game.world.height, 
-            this.game.world.y+Math.random()*this.game.world.width, 
+            this.game.world.x+Math.random()*this.game.world.width, 
+            this.game.world.y+Math.random()*this.game.world.height, 
             'enemy');
         this.game.physics.enable(enemy, Phaser.Physics.ARCADE);
         enemy.body.allowGravity = false;
