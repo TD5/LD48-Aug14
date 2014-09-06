@@ -1,3 +1,5 @@
+"use strict";
+
 function GameOverState(game)
 {
     this.game = game;

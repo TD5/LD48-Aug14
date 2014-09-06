@@ -1,3 +1,5 @@
+"use strict";
+
 function WinState(game)
 {
     this.game = game;

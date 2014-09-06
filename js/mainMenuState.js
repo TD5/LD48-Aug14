@@ -1,3 +1,5 @@
+"use strict";
+
 function MainMenuState(game)
 {
     this.WAIT_PERIOD = 6000;

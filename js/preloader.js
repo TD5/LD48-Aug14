@@ -1,3 +1,5 @@
+"use strict";
+
 function Preloader(game)
 {
     this.game = game;

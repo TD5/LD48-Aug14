@@ -1,3 +1,5 @@
+"use strict";
+
 function MainGameState(game)
 {
     this.game = game;
