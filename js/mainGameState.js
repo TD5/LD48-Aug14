@@ -186,7 +186,7 @@ MainGameState.prototype.createEnemies = function()
         this.enemies.add(enemy);
     }
     
-        for (var i = 0; i < this.MAX_ENEMIES_SPAWNED; i++) // More enemies for the boss to spawn
+    for (var i = 0; i < this.MAX_ENEMIES_SPAWNED; i++) // More enemies for the boss to spawn
     {
         enemy = this.game.add.sprite(
             this.boss.x, 
@@ -196,7 +196,7 @@ MainGameState.prototype.createEnemies = function()
         enemy.body.allowGravity = false;
         enemy.anchor.setTo(0.5, 0.5);
         enemy.animations.add('fluctuate', [0, 1, 2], 10, true);
-        enemy.animations.play('fluctuate');
+        enemy.animations.add('die', [3, 4], 40, true);
         enemy.kill();
         enemy.spawnedByBoss = true;
         this.enemies.add(enemy);
@@ -410,6 +410,7 @@ MainGameState.prototype.bossSpawnEnemies = function()
         enemy.reset(
             this.boss.x + Math.floor(Math.random() * 300)-150, 
             this.boss.y + Math.floor(Math.random() * 300)-150);
+        enemy.animations.play('fluctuate');
     }
 };
 
