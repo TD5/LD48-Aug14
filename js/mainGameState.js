@@ -8,10 +8,11 @@ function MainGameState(game)
     this.FIRE_DELAY = 100;
     this.BOSS_FIRE_DELAY = 180;
     this.ENEMY_SPAWN_DELAY = 600;
-    this.SMALL_LASER_SPEED = 700;
-    this.BOSS_BULLET_SPEED = 450;
+    this.SMALL_LASER_SPEED = 900;
+    this.BOSS_BULLET_SPEED = 380;
     this.ENEMY_ATTRACTION_ZONE = 900;
     this.MAX_ENEMIES_SPAWNED = 20;
+    this.MOVE_SPEED = 200;
 }
 
 MainGameState.prototype.thispreload = function() 
@@ -286,7 +287,7 @@ MainGameState.prototype.update = function()
     
     if (this.leftButton.isDown)
     {
-        this.player.body.velocity.x = -150;
+        this.player.body.velocity.x = -this.MOVE_SPEED;
         if (!this.jumping)
         {
             if (this.player.body.onFloor())
@@ -306,7 +307,7 @@ MainGameState.prototype.update = function()
     }
     else if (this.rightButton.isDown)
     {
-        this.player.body.velocity.x = 150;
+        this.player.body.velocity.x = this.MOVE_SPEED;
 
         if (!this.jumping)
         {
