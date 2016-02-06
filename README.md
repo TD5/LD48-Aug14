@@ -1,7 +1,7 @@
 LD48-Aug14
 ==========
 
-My entry for Ludum Dare 30
+My entry for Ludum Dare in August 2014.
 
 The boss is tough, but I have beaten it!
 
